@@ -1,6 +1,8 @@
 ---
 title: "R Notebook"
-output: html_notebook
+output:
+  html_document:
+    df_print: paged
 ---
 
 After [Kriging in Perspective](http://www.stat.cmu.edu/~cshalizi/kriging.pdf)
