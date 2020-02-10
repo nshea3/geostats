@@ -1,0 +1,57 @@
+---
+title: "R Notebook"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+
+
+```{r}
+library(sp)
+library(rgdal)
+library(raster)
+```
+
+```{r}
+GDALinfo("C:/Users/gushi/Projects/CFSG_project/Norway_data/Data/DemoData_version_files/geophysics/magnetic/w001001.adf")
+```
+
+```{r}
+rast <- raster("Data/DemoData_version_files/geophysics/magnetic/w001001.adf")
+
+rast2 <- raster("Data/DemoData_version_files/recalc_geophysics/appa_res_rc/w001001.adf")
+
+
+mineral_deposits <- readOGR(dsn=path.expand("Data/DemoData_version_files/shape_files"),
+                            layer="mineral_deposits")
+
+study_area <- readOGR(dsn=path.expand("Data/DemoData_version_files/shape_files"),
+                            layer="study_area")
+```
+
+```{r}
+plot(rast)
+plot(rast2)
+plot(mineral_deposits, add=TRUE)
+plot(study_area, add=TRUE)
+```
+```{r}
+v <- extract(rast,mineral_deposits)
+v2 <- extract(rast2,mineral_deposits)
+```
+```{r}
+hist(rast)
+```
+
+```{r}
+sample_pt <- spsample(study_area, 1, "random")
+sample_pt@coords
+extract(rast,sample_pt)
+extract(rast2,sample_pt)
+```
+```{r}
+hist(as.numeric(mineral_deposits$Length_m))
+hist(as.numeric(mineral_deposits$Width_m))
+```
+
