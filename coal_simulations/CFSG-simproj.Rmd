@@ -167,8 +167,17 @@ Few possibilities:
 
 Create new selection
 
+
+Trying to use http://rgeostats.free.fr/html/db.selgrid.html to transfer the selection from one grid to the other. 
+
+May have to work backwards and add a grid to the original DB? I don't know! Look at some more examples.
+
 ```{r}
 sim_lq0_sel = db.sel(sim_lq, SimPGS.LQ.SFac1==1)
 sim_lq1_sel = db.sel(sim_lq, SimPGS.LQ.SFac1==2)
+
+#sim_lq1_sel
+db.selgrid(sim_a0, sim_lq0_sel,indmin = c(0,0), indmax=c(20000, 10000), verbose = TRUE)
+sim_lq0_sel
 ```
 
