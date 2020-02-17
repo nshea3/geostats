@@ -121,18 +121,43 @@ Both have Gaussian covariance with range 10.
 
 ***QUESTION:*** where to set the variance? we set the mean in the simtub function. 
 Does this go in the "sill" argument?
+```{r}
+coal_a0 = db.sel(coal_db, LQ==1)
+plot(coal_a0)
+```
 
 ```{r}
 
-coal_db = db.locate(coal_db,6,"z")
+coal_a0 = db.locate(coal_a0,6,"z")
 
-gaus_a = model.create("Gaussian", range=10)
-Tmodel=model.create(vartype="Gaussian",range=20,ndim=2)
+gaus_a0 = model.create("Gaussian", range=10, sill=250000)
+#Tmodel=model.create(vartype="Gaussian",range=20,ndim=2)
 
 
-sim3 =  simtub(dbin = coal_db,dbout=outdb,model=Tmodel,neigh = neighb,seed=12455)
+sim3 =  simtub(dbin = coal_a0,dbout=outdb,model=gaus_a0,neigh = neighb,mean=5000)
 
 plot(sim3)
 
 ```
+```{r}
+coal_a1 = db.sel(coal_db, LQ==2)
+gaus_a1 = model.create("Gaussian", range=10, sill=9000000)
+#Tmodel=model.create(vartype="Gaussian",range=20,ndim=2)
 
+
+sim4 =  simtub(dbin = coal_a1,dbout=outdb,model=gaus_a1,neigh = neighb,mean=15000)
+
+plot(sim4)
+plot(coal_a1,add=T)
+```
+***QUESTION***: 
+
+Do we need to select then simulate? I think we need to SELECT then simulate after. 
+
+Few possibilities:
+
+-There is a way to use two different distributions based on the value of another variable (so one gaussian for A0, different for A1) that I am missing within the simulation code (Would this be )
+
+-There is a built in way to draw data from two different databases dictated by a third
+
+-There is not a built in way and I will have to do this myself. 
