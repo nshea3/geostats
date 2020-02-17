@@ -57,13 +57,13 @@ plot(coal_db)
 http://rgeostats.free.fr/html/simpgs.html
 
 ```{r}
-Tmodel=model.create(vartype="Gaussian",range=20,ndim=2)
+Tmodel=model.create(vartype="Gaussian",range=20,sill=4,ndim=2)
 
 outdb = db.create(x0=c(0,0),dx=c(1,1),nx=c(200,100))
 
 neighb = neigh.create(ndim = 2, type = 0)
 
-simu <- simtub(nbtuba = 450, dbin=coal_db,dbout=outdb,model=Tmodel,neigh = neighb)
+simu <- simtub(nbtuba = 450, dbin=coal_db,dbout=outdb,model=Tmodel,neigh = neighb,mean = c(10))
 
 plot(simu)
 plot(coal_db, add=T)
@@ -124,15 +124,15 @@ Does this go in the "sill" argument?
 
 ```{r}
 
-coal_db = db.locate(coal_db,8,"z")
+coal_db = db.locate(coal_db,6,"z")
 
 gaus_a = model.create("Gaussian", range=10)
 Tmodel=model.create(vartype="Gaussian",range=20,ndim=2)
 
 
-coal_db <- simtub(dbin = coal_db,dbout=coal_db,model=Tmodel,neigh = neighb,seed=12455)
+sim3 =  simtub(dbin = coal_db,dbout=outdb,model=Tmodel,neigh = neighb,seed=12455)
 
-plot(coal_db)
+plot(sim3)
 
 ```
 
