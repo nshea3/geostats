@@ -1,0 +1,138 @@
+---
+title: "R Notebook"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+
+
+```{r}
+rm(list=ls())
+
+coal_df = read.csv(file = 'dataset_Nicholas-Tony.csv')
+
+
+coal_df$LQ = coal_df$LQ + 1
+
+coal_df
+```
+```{r}
+plot(coal_df$x, coal_df$y, cex = coal_df$Thickness/10.0)
+```
+```{r}
+print(mean(coal_df$Thickness))
+print(var(coal_df$Thickness))
+```
+```{r}
+print(mean(coal_df$Accumulation))
+print(var(coal_df$Accumulation))
+```
+
+
+
+```{r}
+hist(coal_df$Thickness)
+```
+```{r}
+hist(coal_df$Accumulation)
+```
+
+```{r}
+library(RGeostats)
+
+
+
+coal_db <- db.create(coal_df)
+
+coal_db = db.locate(coal_db,3:4,"x")
+coal_db = db.locate(coal_db,5,"z")
+
+coal_db
+plot(coal_db)
+```
+
+# 4. Conditional simulation of thickness T on the discretization grid
+
+http://rgeostats.free.fr/html/simpgs.html
+
+```{r}
+Tmodel=model.create(vartype="Gaussian",range=20,ndim=2)
+
+outdb = db.create(x0=c(0,0),dx=c(1,1),nx=c(200,100))
+
+neighb = neigh.create(ndim = 2, type = 0)
+
+simu <- simtub(nbtuba = 450, dbin=coal_db,dbout=outdb,model=Tmodel,neigh = neighb)
+
+plot(simu)
+plot(coal_db, add=T)
+```
+```{r}
+hist(simu@items$Simu.Thickness.S1)
+cgrid = db.create(x0=c(0,0),dx=c(10,10),nx=c(20,10))
+#simu
+plot(blockstat(cgrid, simu, fun='mean'))
+```
+
+# 5. Conditional simulation of LQ (lignite quality index)
+
+Modelled as a thresholded GRF with constant proportion 0.5. 
+Underlying GRF is standard ($\mu = 0$ and $\sigma^{2} = 1$) and Gaussian covariance with range 50. 
+
+First, update the 
+
+```{r}
+
+props = table(coal_db[,"LQ"]) / coal_db$nsamples
+props = c(0.5,0.5)
+rule = rule.create(c("S", "F1", "F2"))
+plot(rule, props=props, col=c("blue","yellow"), title="Lithotype Rule")
+```
+
+```{r}
+coal_db = db.locate(coal_db,7,'z')
+plot(coal_df$x, coal_df$y, pch = coal_df$LQ)
+```
+
+```{r}
+voisin = neigh.create(type=0)
+gaus = model.create("Gaussian", range=50)
+
+sim2 = simpgs(dbout=outdb, dbin=coal_db, rule=rule,props=c(0.5, 0.5), model1=gaus,nbtuba=600, neigh = voisin)
+coal_db
+plot(sim2)
+```
+```{r}
+plot(blockstat(cgrid, sim2, fun='mean'))
+```
+
+
+
+# 6. Conditional simulation of the accumulation A 
+
+just continue with the simulation from before
+
+Where $LQ(x) = 0$,  $\mu = 5000$ and $\sigma^{2} = 250000$
+
+Where $LQ(x) = 1$, $\mu = 15000$ and $\sigma^{2} = 9\times10^6$.
+
+Both have Gaussian covariance with range 10. 
+
+***QUESTION:*** where to set the variance? we set the mean in the simtub function. 
+Does this go in the "sill" argument?
+
+```{r}
+
+coal_db = db.locate(coal_db,8,"z")
+
+gaus_a = model.create("Gaussian", range=10)
+Tmodel=model.create(vartype="Gaussian",range=20,ndim=2)
+
+
+coal_db <- simtub(dbin = coal_db,dbout=coal_db,model=Tmodel,neigh = neighb,seed=12455)
+
+plot(coal_db)
+
+```
+
