@@ -123,13 +123,12 @@ Both have Gaussian covariance with range 10.
 ***QUESTION:*** where to set the variance? we set the mean in the simtub function. 
 Does this go in the "sill" argument?
 ```{r}
-coal_a0 = db.sel(coal_db, LQ==1)
-plot(coal_a0)
+
 ```
 
 ```{r}
-
-coal_a0 = db.locate(coal_a0,6,"z")
+coal_a0 = db.sel(coal_db, LQ==1)
+coal_a0 = db.locate(coal_db,6,"z")
 
 gaus_a0 = model.create("Gaussian", range=10, sill=250000)
 #Tmodel=model.create(vartype="Gaussian",range=20,ndim=2)
@@ -142,6 +141,7 @@ plot(coal_a0, add=T)
 ```
 ```{r}
 coal_a1 = db.sel(coal_db, LQ==2)
+coal_a1 = db.locate(coal_db,6,"z")
 gaus_a1 = model.create("Gaussian", range=10, sill=9000000)
 #Tmodel=model.create(vartype="Gaussian",range=20,ndim=2)
 
@@ -176,8 +176,34 @@ May have to work backwards and add a grid to the original DB? I don't know! Look
 sim_lq0_sel = db.sel(sim_lq, SimPGS.LQ.SFac1==1)
 sim_lq1_sel = db.sel(sim_lq, SimPGS.LQ.SFac1==2)
 
-#sim_lq1_sel
-db.selgrid(sim_a0, sim_lq0_sel,indmin = c(0,0), indmax=c(20000, 10000), verbose = TRUE)
-sim_lq0_sel
+```
+
+```{r}
+cpdb = db.grid.copy(sim_lq, sim_a0, names =db.getname(sim_lq,"z",1))
+
+cpdb = db.sel(cpdb, Copy.SimPGS.LQ.SFac1==1)
+
+cpdb = db.locate(cpdb, 4, "z")
+
+plot(cpdb)
+```
+```{r}
+plot(sim_a0)
+simulated_a0 = sim_a0@items$Simu.Accumulation.S1
+simulated_a1 = sim_a1@items$Simu.Accumulation.S1
+
+mask_1 = sim_lq@items$SimPGS.LQ.SFac1 - 1
+mask_0 = 1 - mask_1
+
+all(mask_0 + mask_1 == 1)
+
+pw_map = mask_0 * simulated_a0 + mask_1 * simulated_a1
+```
+
+Made the map, now to put it back into R
+
+```{r}
+apwdb = db.create(pw_map,x0=c(0,0),dx=c(1,1),nx=c(200,100))
+plot(db.locate(apwdb, 4, "z"))
 ```
 
