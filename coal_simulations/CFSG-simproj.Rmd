@@ -301,7 +301,6 @@ sima1 = sim_a1(coal_db, nsim = 100)
 #The runs are stored in a list, starting at number 4 and going on for each of the simulations
 #Need to 
 
-
 for (idx in 4:103){
   thickn = sthicks@items[[idx]]
   simlq = slqs@items[[idx]]
@@ -317,13 +316,45 @@ for (idx in 4:103){
   
   sel = selectivity(panel_q, cuts = seq(1000,2500,50),flag.plot = F)
   
+  
+  
   if (idx == 4){
-    selectivity.curve(sel,"z","Q")
+    z = sel[,1]
+    Qs = sel[,3]
+    Qssq = sel[,3]**2
+    Ms = sel[,5]
+    Mssq = sel[,5]**2
   } else {
-    selectivity.curve(sel,"z","Q", add=T)
+    Qs = sel[,3] + Qs
+    Qssq = sel[,3]**2 + Qssq
+    Ms = sel[,5] + Ms
+    Mssq = sel[,5]**2 + Mssq
   }
-
 }
 
+
+```
+```{r}
+mu = Qs / 100.0
+
+plot(z, mu, type = 'l')
+
+var = (Qssq / 100.0) - (Qs / 100.0)**2
+sd = sqrt(var)
+
+lines(z, mu + 1.96*sd, col="red")
+lines(z, mu - 1.96*sd, col="red")
+```
+
+```{r}
+mmu = Ms / 100.0
+
+plot(z, mmu, type = 'l')
+
+mvar = (Mssq / 100.0) - (Ms / 100.0)**2
+msd = sqrt(mvar)
+
+lines(z, mmu + 1.96*msd, col="red")
+lines(z, mmu - 1.96*msd, col="red")
 ```
 
