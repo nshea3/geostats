@@ -299,7 +299,20 @@ sima1 = sim_a1(coal_db, nsim = 100)
 
 
 for (idx in 4:103){
-  print(mean(slqs@items[[idx]]))
+  thickn = sthicks@items[[idx]]
+  simlq = slqs@items[[idx]]
+  simulated_a0 = sima0@items[[idx]]
+  simulated_a1 = sima1@items[[idx]]
+  ajsim = join_sims_zonal(simulated_a0,simulated_a1,simlq)
+  cx = ajsim/thickn
+  cxdb = db.create(cx,x0=c(0,0),dx=c(1,1),nx=c(200,100))
+  cxdb = db.locate(cxdb, 4, "z")
+  
+  cgrid = db.create(x0=c(0,0),dx=c(10,10),nx=c(20,10))
+  panel_q = blockstat(cgrid, cxdb, fun='mean')
+  
+  print(db.stat(panel_q, fun="mean"))
+
 }
 
 ```

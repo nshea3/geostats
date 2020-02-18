@@ -2312,7 +2312,7 @@ plot(blockstat(cgrid, cxdb, fun=&#39;mean&#39;))</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI2ZvciAoeCBpbiBzbHFzQGl0ZW1zKXtcbiMgIHByaW50KG1lYW4oeCkpXG4jfVxuXG5cbiNUaGUgcnVucyBhcmUgc3RvcmVkIGluIGEgbGlzdCwgc3RhcnRpbmcgYXQgbnVtYmVyIDQgYW5kIGdvaW5nIG9uIGZvciBlYWNoIG9mIHRoZSBzaW11bGF0aW9uc1xuI05lZWQgdG8gXG5cblxuZm9yIChpZHggaW4gNDoxMDMpe1xuICBwcmludChtZWFuKHNscXNAaXRlbXNbW2lkeF1dKSlcbn1cbmBgYCJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI2ZvciAoeCBpbiBzbHFzQGl0ZW1zKXtcbiMgIHByaW50KG1lYW4oeCkpXG4jfVxuXG5cbiNUaGUgcnVucyBhcmUgc3RvcmVkIGluIGEgbGlzdCwgc3RhcnRpbmcgYXQgbnVtYmVyIDQgYW5kIGdvaW5nIG9uIGZvciBlYWNoIG9mIHRoZSBzaW11bGF0aW9uc1xuI05lZWQgdG8gXG5cblxuZm9yIChpZHggaW4gNDoxMDMpe1xuICB0aGlja24gPSBzdGhpY2tzQGl0ZW1zW1tpZHhdXVxuICBzaW1scSA9IHNscXNAaXRlbXNbW2lkeF1dXG4gIHNpbXVsYXRlZF9hMCA9IHNpbWEwQGl0ZW1zW1tpZHhdXVxuICBzaW11bGF0ZWRfYTEgPSBzaW1hMUBpdGVtc1tbaWR4XV1cbiAgYWpzaW0gPSBqb2luX3NpbXNfem9uYWwoc2ltdWxhdGVkX2EwLHNpbXVsYXRlZF9hMSxzaW1scSlcbiAgY3ggPSBhanNpbS90aGlja25cbiAgY3hkYiA9IGRiLmNyZWF0ZShjeCx4MD1jKDAsMCksZHg9YygxLDEpLG54PWMoMjAwLDEwMCkpXG4gIGN4ZGIgPSBkYi5sb2NhdGUoY3hkYiwgNCwgXCJ6XCIpXG4gIFxuICBjZ3JpZCA9IGRiLmNyZWF0ZSh4MD1jKDAsMCksZHg9YygxMCwxMCksbng9YygyMCwxMCkpXG4gIHBhbmVsX3EgPSBibG9ja3N0YXQoY2dyaWQsIGN4ZGIsIGZ1bj0nbWVhbicpXG4gIFxuICBwcmludChkYi5zdGF0KHBhbmVsX3EsIGZ1bj1cIm1lYW5cIikpXG5cbn1cbmBgYCJ9 -->
 <pre class="r"><code>#for (x in slqs@items){
 #  print(mean(x))
 #}
@@ -2323,110 +2323,721 @@ plot(blockstat(cgrid, cxdb, fun=&#39;mean&#39;))</code></pre>
 
 
 for (idx in 4:103){
-  print(mean(slqs@items[[idx]]))
+  thickn = sthicks@items[[idx]]
+  simlq = slqs@items[[idx]]
+  simulated_a0 = sima0@items[[idx]]
+  simulated_a1 = sima1@items[[idx]]
+  ajsim = join_sims_zonal(simulated_a0,simulated_a1,simlq)
+  cx = ajsim/thickn
+  cxdb = db.create(cx,x0=c(0,0),dx=c(1,1),nx=c(200,100))
+  cxdb = db.locate(cxdb, 4, &quot;z&quot;)
+  
+  cgrid = db.create(x0=c(0,0),dx=c(10,10),nx=c(20,10))
+  panel_q = blockstat(cgrid, cxdb, fun=&#39;mean&#39;)
+  
+  print(db.stat(panel_q, fun=&quot;mean&quot;))
+
 }</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDEuMjkxOVxuWzFdIDEuMjc0NFxuWzFdIDEuMjMzNFxuWzFdIDEuMjc3NDVcblsxXSAxLjI3MTVcblsxXSAxLjI2MjNcblsxXSAxLjI3NTRcblsxXSAxLjI0MTZcblsxXSAxLjI4NTlcblsxXSAxLjI5OTU1XG5bMV0gMS4yMzM2XG5bMV0gMS4yNzcxNVxuWzFdIDEuMjY1M1xuWzFdIDEuMjM0N1xuWzFdIDEuMjM5NFxuWzFdIDEuMjk2MjVcblsxXSAxLjI4M1xuWzFdIDEuMjUwNzVcblsxXSAxLjIzMzNcblsxXSAxLjI3ODc1XG5bMV0gMS4yODk0NVxuWzFdIDEuMjYyMTVcblsxXSAxLjI2ODhcblsxXSAxLjIyNzg1XG5bMV0gMS4zMTc0NVxuWzFdIDEuMjU4NFxuWzFdIDEuMjgwMzVcblsxXSAxLjI1NzlcblsxXSAxLjI1NjdcblsxXSAxLjI0NTVcblsxXSAxLjMyMTdcblsxXSAxLjI1NDg1XG5bMV0gMS4yNzMzXG5bMV0gMS4zMDIzNVxuWzFdIDEuMjc4OTVcblsxXSAxLjI3NzFcblsxXSAxLjI4NTk1XG5bMV0gMS4yODhcblsxXSAxLjI2NjM1XG5bMV0gMS4yNjNcblsxXSAxLjI3MDNcblsxXSAxLjI5MzE1XG5bMV0gMS4zMDI3NVxuWzFdIDEuMzA0NDVcblsxXSAxLjI5NTVcblsxXSAxLjI2NjRcblsxXSAxLjI5MTU1XG5bMV0gMS4yNjA2XG5bMV0gMS4yODNcblsxXSAxLjI0MDFcblsxXSAxLjI4MTE1XG5bMV0gMS4zMDY0NVxuWzFdIDEuMjkwN1xuWzFdIDEuMzA5MTVcblsxXSAxLjI1MDU1XG5bMV0gMS4yMzg3NVxuWzFdIDEuMjg5NFxuWzFdIDEuMjg1OTVcblsxXSAxLjI0ODFcblsxXSAxLjI4NjE1XG5bMV0gMS4yNzY2XG5bMV0gMS4yNzY4NVxuWzFdIDEuMjkwMTVcblsxXSAxLjI4MzNcblsxXSAxLjMwMTM1XG5bMV0gMS4yNzg5XG5bMV0gMS4yOTg2NVxuWzFdIDEuMzAzM1xuWzFdIDEuMjcxMjVcblsxXSAxLjI3NDlcblsxXSAxLjI3NDM1XG5bMV0gMS4yOTgxXG5bMV0gMS4yODE4NVxuWzFdIDEuMjgzNlxuWzFdIDEuMjY5MjVcblsxXSAxLjI2NzdcblsxXSAxLjIzMDlcblsxXSAxLjMxMDRcblsxXSAxLjI3NzdcblsxXSAxLjIzMzM1XG5bMV0gMS4yNjQ5XG5bMV0gMS4yOTAyNVxuWzFdIDEuMzEyOFxuWzFdIDEuMjU0MTVcblsxXSAxLjI0NDk1XG5bMV0gMS4zMDg2XG5bMV0gMS4yOTU1XG5bMV0gMS4zMjQxNVxuWzFdIDEuMjc2N1xuWzFdIDEuMjY5OTVcblsxXSAxLjI1NDJcblsxXSAxLjI1ODRcblsxXSAxLjI3OThcblsxXSAxLjI3NTlcblsxXSAxLjI2MDg1XG5bMV0gMS4yOTkwNVxuWzFdIDEuMjc3ODVcblsxXSAxLjMxNDI1XG5bMV0gMS4yNTdcblsxXSAxLjI2MTY1XG4ifQ== -->
-<pre><code>[1] 1.2919
-[1] 1.2744
-[1] 1.2334
-[1] 1.27745
-[1] 1.2715
-[1] 1.2623
-[1] 1.2754
-[1] 1.2416
-[1] 1.2859
-[1] 1.29955
-[1] 1.2336
-[1] 1.27715
-[1] 1.2653
-[1] 1.2347
-[1] 1.2394
-[1] 1.29625
-[1] 1.283
-[1] 1.25075
-[1] 1.2333
-[1] 1.27875
-[1] 1.28945
-[1] 1.26215
-[1] 1.2688
-[1] 1.22785
-[1] 1.31745
-[1] 1.2584
-[1] 1.28035
-[1] 1.2579
-[1] 1.2567
-[1] 1.2455
-[1] 1.3217
-[1] 1.25485
-[1] 1.2733
-[1] 1.30235
-[1] 1.27895
-[1] 1.2771
-[1] 1.28595
-[1] 1.288
-[1] 1.26635
-[1] 1.263
-[1] 1.2703
-[1] 1.29315
-[1] 1.30275
-[1] 1.30445
-[1] 1.2955
-[1] 1.2664
-[1] 1.29155
-[1] 1.2606
-[1] 1.283
-[1] 1.2401
-[1] 1.28115
-[1] 1.30645
-[1] 1.2907
-[1] 1.30915
-[1] 1.25055
-[1] 1.23875
-[1] 1.2894
-[1] 1.28595
-[1] 1.2481
-[1] 1.28615
-[1] 1.2766
-[1] 1.27685
-[1] 1.29015
-[1] 1.2833
-[1] 1.30135
-[1] 1.2789
-[1] 1.29865
-[1] 1.3033
-[1] 1.27125
-[1] 1.2749
-[1] 1.27435
-[1] 1.2981
-[1] 1.28185
-[1] 1.2836
-[1] 1.26925
-[1] 1.2677
-[1] 1.2309
-[1] 1.3104
-[1] 1.2777
-[1] 1.23335
-[1] 1.2649
-[1] 1.29025
-[1] 1.3128
-[1] 1.25415
-[1] 1.24495
-[1] 1.3086
-[1] 1.2955
-[1] 1.32415
-[1] 1.2767
-[1] 1.26995
-[1] 1.2542
-[1] 1.2584
-[1] 1.2798
-[1] 1.2759
-[1] 1.26085
-[1] 1.29905
-[1] 1.27785
-[1] 1.31425
-[1] 1.257
-[1] 1.26165</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4MjEuODUzMlxuIn0= -->
+<pre><code>         [,1]
+[1,] 821.8532</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3OTguNzU1OFxuIn0= -->
+<pre><code>         [,1]
+[1,] 798.7558</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3NzAuMjk0MlxuIn0= -->
+<pre><code>         [,1]
+[1,] 770.2942</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3ODMuMTYyN1xuIn0= -->
+<pre><code>         [,1]
+[1,] 783.1627</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4MTIuMzEzMlxuIn0= -->
+<pre><code>         [,1]
+[1,] 812.3132</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3NzUuMzMyOVxuIn0= -->
+<pre><code>         [,1]
+[1,] 775.3329</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3ODguNjQ4NlxuIn0= -->
+<pre><code>         [,1]
+[1,] 788.6486</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3ODAuMTE0OVxuIn0= -->
+<pre><code>         [,1]
+[1,] 780.1149</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4MzguMjYzM1xuIn0= -->
+<pre><code>         [,1]
+[1,] 838.2633</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3NzguNTA3MlxuIn0= -->
+<pre><code>         [,1]
+[1,] 778.5072</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3NjAuOTIyOFxuIn0= -->
+<pre><code>         [,1]
+[1,] 760.9228</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4MTMuODgwN1xuIn0= -->
+<pre><code>         [,1]
+[1,] 813.8807</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICBbLDFdXG5bMSxdIDc2OS4xODhcbiJ9 -->
+<pre><code>        [,1]
+[1,] 769.188</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3NjcuMTQzN1xuIn0= -->
+<pre><code>         [,1]
+[1,] 767.1437</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3NTAuOTQyN1xuIn0= -->
+<pre><code>         [,1]
+[1,] 750.9427</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4MzYuNDc2NFxuIn0= -->
+<pre><code>         [,1]
+[1,] 836.4764</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4MTIuMzU2MlxuIn0= -->
+<pre><code>         [,1]
+[1,] 812.3562</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3NjEuNjgyMlxuIn0= -->
+<pre><code>         [,1]
+[1,] 761.6822</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3NzAuMTM4NVxuIn0= -->
+<pre><code>         [,1]
+[1,] 770.1385</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3ODkuMTkwM1xuIn0= -->
+<pre><code>         [,1]
+[1,] 789.1903</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4MjkuNDM3NFxuIn0= -->
+<pre><code>         [,1]
+[1,] 829.4374</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4MjMuNTI4NlxuIn0= -->
+<pre><code>         [,1]
+[1,] 823.5286</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICBbLDFdXG5bMSxdIDgwMi41MjhcbiJ9 -->
+<pre><code>        [,1]
+[1,] 802.528</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3NDYuNTgzMVxuIn0= -->
+<pre><code>         [,1]
+[1,] 746.5831</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4MzYuNzYyNlxuIn0= -->
+<pre><code>         [,1]
+[1,] 836.7626</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3OTcuODU5NlxuIn0= -->
+<pre><code>         [,1]
+[1,] 797.8596</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3ODMuODI5NVxuIn0= -->
+<pre><code>         [,1]
+[1,] 783.8295</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3NjAuNzg3M1xuIn0= -->
+<pre><code>         [,1]
+[1,] 760.7873</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3OTguMDIzN1xuIn0= -->
+<pre><code>         [,1]
+[1,] 798.0237</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3NjcuMjEzNlxuIn0= -->
+<pre><code>         [,1]
+[1,] 767.2136</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4NTguOTAwOVxuIn0= -->
+<pre><code>         [,1]
+[1,] 858.9009</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3NzAuMTU2NlxuIn0= -->
+<pre><code>         [,1]
+[1,] 770.1566</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3ODguMzQ3NlxuIn0= -->
+<pre><code>         [,1]
+[1,] 788.3476</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4MjQuNjYxM1xuIn0= -->
+<pre><code>         [,1]
+[1,] 824.6613</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3NzYuMjMzN1xuIn0= -->
+<pre><code>         [,1]
+[1,] 776.2337</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4MDkuNzE0NFxuIn0= -->
+<pre><code>         [,1]
+[1,] 809.7144</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4MDMuMTMwN1xuIn0= -->
+<pre><code>         [,1]
+[1,] 803.1307</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4MDEuODYxOFxuIn0= -->
+<pre><code>         [,1]
+[1,] 801.8618</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3ODMuNDE1MlxuIn0= -->
+<pre><code>         [,1]
+[1,] 783.4152</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3ODIuMTM0NlxuIn0= -->
+<pre><code>         [,1]
+[1,] 782.1346</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3OTUuMTUxMVxuIn0= -->
+<pre><code>         [,1]
+[1,] 795.1511</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4MTIuNzE5NVxuIn0= -->
+<pre><code>         [,1]
+[1,] 812.7195</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4ODkuOTM1OFxuIn0= -->
+<pre><code>         [,1]
+[1,] 889.9358</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgIFssMV1cblsxLF0gODM4LjY4XG4ifQ== -->
+<pre><code>       [,1]
+[1,] 838.68</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4MDguMDc1OVxuIn0= -->
+<pre><code>         [,1]
+[1,] 808.0759</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3OTMuMjkwN1xuIn0= -->
+<pre><code>         [,1]
+[1,] 793.2907</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICBbLDFdXG5bMSxdIDgyNS43NDNcbiJ9 -->
+<pre><code>        [,1]
+[1,] 825.743</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4MTMuMzI3MVxuIn0= -->
+<pre><code>         [,1]
+[1,] 813.3271</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICBbLDFdXG5bMSxdIDgwOC4yOTdcbiJ9 -->
+<pre><code>        [,1]
+[1,] 808.297</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3NzAuNDY5OVxuIn0= -->
+<pre><code>         [,1]
+[1,] 770.4699</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4MDQuMDg5MlxuIn0= -->
+<pre><code>         [,1]
+[1,] 804.0892</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICBbLDFdXG5bMSxdIDg3OC4zNjNcbiJ9 -->
+<pre><code>        [,1]
+[1,] 878.363</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3OTkuOTMyOVxuIn0= -->
+<pre><code>         [,1]
+[1,] 799.9329</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4NDIuNjIzN1xuIn0= -->
+<pre><code>         [,1]
+[1,] 842.6237</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3ODIuMzk1NVxuIn0= -->
+<pre><code>         [,1]
+[1,] 782.3955</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3NjUuNTQwNVxuIn0= -->
+<pre><code>         [,1]
+[1,] 765.5405</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4MjAuMzk2NVxuIn0= -->
+<pre><code>         [,1]
+[1,] 820.3965</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4MjguMDExOVxuIn0= -->
+<pre><code>         [,1]
+[1,] 828.0119</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4MDQuODAzN1xuIn0= -->
+<pre><code>         [,1]
+[1,] 804.8037</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4MjEuMjE2NFxuIn0= -->
+<pre><code>         [,1]
+[1,] 821.2164</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3OTYuNjQ3OFxuIn0= -->
+<pre><code>         [,1]
+[1,] 796.6478</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4MzcuNjg0OVxuIn0= -->
+<pre><code>         [,1]
+[1,] 837.6849</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4MDcuNzAxMlxuIn0= -->
+<pre><code>         [,1]
+[1,] 807.7012</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3ODEuOTU1NFxuIn0= -->
+<pre><code>         [,1]
+[1,] 781.9554</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4MjkuODE1MVxuIn0= -->
+<pre><code>         [,1]
+[1,] 829.8151</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4MTkuNTU3NlxuIn0= -->
+<pre><code>         [,1]
+[1,] 819.5576</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4NjguNzgwOVxuIn0= -->
+<pre><code>         [,1]
+[1,] 868.7809</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4NTMuMjYzOVxuIn0= -->
+<pre><code>         [,1]
+[1,] 853.2639</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3ODUuOTA3N1xuIn0= -->
+<pre><code>         [,1]
+[1,] 785.9077</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3NjEuNDAxNFxuIn0= -->
+<pre><code>         [,1]
+[1,] 761.4014</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4MDguNDY2NlxuIn0= -->
+<pre><code>         [,1]
+[1,] 808.4666</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4NDUuNzQ4N1xuIn0= -->
+<pre><code>         [,1]
+[1,] 845.7487</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3NzEuOTIxNVxuIn0= -->
+<pre><code>         [,1]
+[1,] 771.9215</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4NTMuNjg4MlxuIn0= -->
+<pre><code>         [,1]
+[1,] 853.6882</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICBbLDFdXG5bMSxdIDgwOC41OTRcbiJ9 -->
+<pre><code>        [,1]
+[1,] 808.594</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4MDYuNTY5OVxuIn0= -->
+<pre><code>         [,1]
+[1,] 806.5699</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3MzYuMTc2N1xuIn0= -->
+<pre><code>         [,1]
+[1,] 736.1767</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4OTYuMDUxN1xuIn0= -->
+<pre><code>         [,1]
+[1,] 896.0517</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4MDAuMzE5MlxuIn0= -->
+<pre><code>         [,1]
+[1,] 800.3192</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICBbLDFdXG5bMSxdIDc4Ni4yNTRcbiJ9 -->
+<pre><code>        [,1]
+[1,] 786.254</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4MTcuMjA3MVxuIn0= -->
+<pre><code>         [,1]
+[1,] 817.2071</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4NDAuNjQ3OVxuIn0= -->
+<pre><code>         [,1]
+[1,] 840.6479</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4MTYuNTE2M1xuIn0= -->
+<pre><code>         [,1]
+[1,] 816.5163</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3NzkuOTM1OFxuIn0= -->
+<pre><code>         [,1]
+[1,] 779.9358</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3NjEuNjgwM1xuIn0= -->
+<pre><code>         [,1]
+[1,] 761.6803</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4NDQuOTQ1MlxuIn0= -->
+<pre><code>         [,1]
+[1,] 844.9452</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICBbLDFdXG5bMSxdIDg0NS45NDJcbiJ9 -->
+<pre><code>        [,1]
+[1,] 845.942</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4MzEuMDA5NFxuIn0= -->
+<pre><code>         [,1]
+[1,] 831.0094</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4MDcuNDc3N1xuIn0= -->
+<pre><code>         [,1]
+[1,] 807.4777</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3NjYuMzE4NFxuIn0= -->
+<pre><code>         [,1]
+[1,] 766.3184</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3ODcuMzM4NVxuIn0= -->
+<pre><code>         [,1]
+[1,] 787.3385</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4MDguNjYzNlxuIn0= -->
+<pre><code>         [,1]
+[1,] 808.6636</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICBbLDFdXG5bMSxdIDgxMy44NTVcbiJ9 -->
+<pre><code>        [,1]
+[1,] 813.855</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4MjcuNjk3MlxuIn0= -->
+<pre><code>         [,1]
+[1,] 827.6972</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3OTUuNTA2OFxuIn0= -->
+<pre><code>         [,1]
+[1,] 795.5068</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3OTYuOTM0NVxuIn0= -->
+<pre><code>         [,1]
+[1,] 796.9345</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3NjYuMTA0NFxuIn0= -->
+<pre><code>         [,1]
+[1,] 766.1044</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA4MzkuMDgxMlxuIn0= -->
+<pre><code>         [,1]
+[1,] 839.0812</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3NzQuNzQ1NlxuIn0= -->
+<pre><code>         [,1]
+[1,] 774.7456</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaXMubmEoKSBhcHBsaWVkIHRvIG5vbi0obGlzdCBvciB2ZWN0b3IpIG9mIHR5cGUgJ1M0J2lzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvbmlzLm5hKCkgYXBwbGllZCB0byBub24tKGxpc3Qgb3IgdmVjdG9yKSBvZiB0eXBlICdTNCdOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuIn0= -->
+<pre><code>is.na() applied to non-(list or vector) of type &#39;S4&#39;is.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercionis.na() applied to non-(list or vector) of type &#39;S4&#39;NAs introduced by coercion</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXVxuWzEsXSA3OTYuNzM5N1xuIn0= -->
+<pre><code>         [,1]
+[1,] 796.7397</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -2575,7 +3186,7 @@ has been stabilized by adding a small Nugget Effect</code></pre>
 <!-- rnb-text-end -->
 </div>
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIlIgTm90ZWJvb2siDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCmVkaXRvcl9vcHRpb25zOiANCiAgY2h1bmtfb3V0cHV0X3R5cGU6IGlubGluZQ0KLS0tDQoNCg0KDQpgYGB7cn0NCnJtKGxpc3Q9bHMoKSkNCg0KY29hbF9kZiA9IHJlYWQuY3N2KGZpbGUgPSAnZGF0YXNldF9OaWNob2xhcy1Ub255LmNzdicpDQoNCg0KY29hbF9kZiRMUSA9IGNvYWxfZGYkTFEgKyAxDQoNCmNvYWxfZGYNCmBgYA0KYGBge3J9DQpwbG90KGNvYWxfZGYkeCwgY29hbF9kZiR5LCBjZXggPSBjb2FsX2RmJFRoaWNrbmVzcy8xMC4wKQ0KYGBgDQpgYGB7cn0NCnByaW50KG1lYW4oY29hbF9kZiRUaGlja25lc3MpKQ0KcHJpbnQodmFyKGNvYWxfZGYkVGhpY2tuZXNzKSkNCmBgYA0KYGBge3J9DQpwcmludChtZWFuKGNvYWxfZGYkQWNjdW11bGF0aW9uKSkNCnByaW50KHZhcihjb2FsX2RmJEFjY3VtdWxhdGlvbikpDQpgYGANCg0KDQoNCmBgYHtyfQ0KaGlzdChjb2FsX2RmJFRoaWNrbmVzcykNCmBgYA0KYGBge3J9DQpoaXN0KGNvYWxfZGYkQWNjdW11bGF0aW9uKQ0KYGBgDQoNCmBgYHtyfQ0KbGlicmFyeShSR2Vvc3RhdHMpDQoNCg0KDQpjb2FsX2RiIDwtIGRiLmNyZWF0ZShjb2FsX2RmKQ0KDQpjb2FsX2RiID0gZGIubG9jYXRlKGNvYWxfZGIsMzo0LCJ4IikNCmNvYWxfZGIgPSBkYi5sb2NhdGUoY29hbF9kYiw1LCJ6IikNCg0KY29hbF9kYg0KcGxvdChjb2FsX2RiKQ0KYGBgDQoNCiMgNC4gQ29uZGl0aW9uYWwgc2ltdWxhdGlvbiBvZiB0aGlja25lc3MgVCBvbiB0aGUgZGlzY3JldGl6YXRpb24gZ3JpZA0KDQpodHRwOi8vcmdlb3N0YXRzLmZyZWUuZnIvaHRtbC9zaW1wZ3MuaHRtbA0KDQpgYGB7cn0NCg0KI3NpbV90aGlja25lc3MgPC0gZnVuY3Rpb24oKXsNCiN9DQoNCg0Kc2ltX3RoaWNrbmVzcyA8LSBmdW5jdGlvbihpbmRiLCBuc2ltID0gMSl7DQogIGluZGIgPSBkYi5sb2NhdGUoaW5kYiwgIlRoaWNrbmVzcyIsICJ6IikNCiAgDQogIFRtb2RlbD1tb2RlbC5jcmVhdGUodmFydHlwZT0iR2F1c3NpYW4iLHJhbmdlPTIwLHNpbGw9NCxuZGltPTIpDQogIG91dGRiID0gZGIuY3JlYXRlKHgwPWMoMCwwKSxkeD1jKDEsMSksbng9YygyMDAsMTAwKSkNCiAgbmVpZ2hiID0gbmVpZ2guY3JlYXRlKG5kaW0gPSAyLCB0eXBlID0gMCkNCiAgc2ltdSA8LSBzaW10dWIobmJ0dWJhID0gNDUwLCBkYmluPWluZGIsZGJvdXQ9b3V0ZGIsbW9kZWw9VG1vZGVsLG5laWdoID0gbmVpZ2hiLG1lYW4gPSBjKDEwKSwgbmJzaW11ID0gbnNpbSkNCiAgcmV0dXJuKHNpbXUpDQoNCn0NCg0Kc2ltdSA9IHNpbV90aGlja25lc3MoY29hbF9kYikNCg0KcGxvdChzaW11KQ0KcGxvdChjb2FsX2RiLCBhZGQ9VCkNCmBgYA0KYGBge3J9DQpoaXN0KHNpbXVAaXRlbXMkU2ltdS5UaGlja25lc3MuUzEpDQpjZ3JpZCA9IGRiLmNyZWF0ZSh4MD1jKDAsMCksZHg9YygxMCwxMCksbng9YygyMCwxMCkpDQojc2ltdQ0KcGxvdChibG9ja3N0YXQoY2dyaWQsIHNpbXUsIGZ1bj0nbWVhbicpKQ0KYGBgDQoNCiMgNS4gQ29uZGl0aW9uYWwgc2ltdWxhdGlvbiBvZiBMUSAobGlnbml0ZSBxdWFsaXR5IGluZGV4KQ0KDQpNb2RlbGxlZCBhcyBhIHRocmVzaG9sZGVkIEdSRiB3aXRoIGNvbnN0YW50IHByb3BvcnRpb24gMC41LiANClVuZGVybHlpbmcgR1JGIGlzIHN0YW5kYXJkICgkXG11ID0gMCQgYW5kICRcc2lnbWFeezJ9ID0gMSQpIGFuZCBHYXVzc2lhbiBjb3ZhcmlhbmNlIHdpdGggcmFuZ2UgNTAuIA0KDQpGaXJzdCwgdXBkYXRlIHRoZSANCg0KYGBge3J9DQoNCnByb3BzID0gdGFibGUoY29hbF9kYlssIkxRIl0pIC8gY29hbF9kYiRuc2FtcGxlcw0KcHJvcHMgPSBjKDAuNSwwLjUpDQpydWxlID0gcnVsZS5jcmVhdGUoYygiUyIsICJGMSIsICJGMiIpKQ0KcGxvdChydWxlLCBwcm9wcz1wcm9wcywgY29sPWMoImJsdWUiLCJ5ZWxsb3ciKSwgdGl0bGU9IkxpdGhvdHlwZSBSdWxlIikNCmBgYA0KDQpgYGB7cn0NCg0KDQpzaW1fbHEgPC0gZnVuY3Rpb24oaW5kYiwgbnNpbSA9IDEpew0KICANCiAgaW5kYiA9IGRiLmxvY2F0ZShpbmRiLCAiTFEiLCAieiIpDQogIHByb3BzID0gYygwLjUsMC41KQ0KICBydWxlID0gcnVsZS5jcmVhdGUoYygiUyIsICJGMSIsICJGMiIpKQ0KICB2b2lzaW4gPSBuZWlnaC5jcmVhdGUodHlwZT0wKQ0KICBvdXRkYiA9IGRiLmNyZWF0ZSh4MD1jKDAsMCksZHg9YygxLDEpLG54PWMoMjAwLDEwMCkpDQogIGdhdXMgPSBtb2RlbC5jcmVhdGUoIkdhdXNzaWFuIiwgcmFuZ2U9NTApDQogIHNpbWxxID0gc2ltcGdzKGRib3V0PW91dGRiLCBkYmluPWluZGIsIHJ1bGU9cnVsZSxwcm9wcz1jKDAuNSwgMC41KSwgbW9kZWwxPWdhdXMsIG5laWdoID0gdm9pc2luLCBuYnNpbXUgPSBuc2ltKQ0KICByZXR1cm4oc2ltbHEpDQoNCn0NCg0Kc2ltbHEgPSBzaW1fbHEoY29hbF9kYikNCg0KcGxvdChzaW1scSkNCnBsb3QoZGIubG9jYXRlKGNvYWxfZGIsICJMUSIsICJ6IiksIGFkZCA9IFQpDQpgYGANCmBgYHtyfQ0KaGlzdChzaW1scUBpdGVtcyRTaW1QR1MuTFEuU0ZhYzEpDQpgYGANCg0KDQoNCg0KIyA2LiBDb25kaXRpb25hbCBzaW11bGF0aW9uIG9mIHRoZSBhY2N1bXVsYXRpb24gQSANCg0KanVzdCBjb250aW51ZSB3aXRoIHRoZSBzaW11bGF0aW9uIGZyb20gYmVmb3JlDQoNCldoZXJlICRMUSh4KSA9IDAkLCAgJFxtdSA9IDUwMDAkIGFuZCAkXHNpZ21hXnsyfSA9IDI1MDAwMCQNCg0KV2hlcmUgJExRKHgpID0gMSQsICRcbXUgPSAxNTAwMCQgYW5kICRcc2lnbWFeezJ9ID0gOVx0aW1lczEwXjYkLg0KDQpCb3RoIGhhdmUgR2F1c3NpYW4gY292YXJpYW5jZSB3aXRoIHJhbmdlIDEwLiANCg0KKioqUVVFU1RJT046KioqIHdoZXJlIHRvIHNldCB0aGUgdmFyaWFuY2U/IHdlIHNldCB0aGUgbWVhbiBpbiB0aGUgc2ltdHViIGZ1bmN0aW9uLiANCkRvZXMgdGhpcyBnbyBpbiB0aGUgInNpbGwiIGFyZ3VtZW50Pw0KDQpgYGB7cn0NCg0Kc2ltX2EwIDwtIGZ1bmN0aW9uKGluZGIsIG5zaW09MSl7DQogIA0KICBpbmRiID0gZGIubG9jYXRlKGluZGIsICJBY2N1bXVsYXRpb24iLCAieiIpDQogIGNvYWxfYTAgPSBkYi5zZWwoaW5kYiwgTFE9PTEpDQogIGdhdXNfYTAgPSBtb2RlbC5jcmVhdGUoIkdhdXNzaWFuIiwgcmFuZ2U9MTAsIHNpbGw9MjUwMDAwKQ0KICBvdXRkYiA9IGRiLmNyZWF0ZSh4MD1jKDAsMCksZHg9YygxLDEpLG54PWMoMjAwLDEwMCkpDQogIG5laWdoYiA9IG5laWdoLmNyZWF0ZShuZGltID0gMiwgdHlwZSA9IDApDQogIHNpbSA9ICBzaW10dWIoZGJpbiA9IGNvYWxfYTAsZGJvdXQ9b3V0ZGIsbW9kZWw9Z2F1c19hMCxuZWlnaCA9IG5laWdoYixtZWFuPTUwMDAsIG5ic2ltdSA9IG5zaW0pDQogIHJldHVybihzaW0pDQogIA0KfQ0KDQoNCiNUbW9kZWw9bW9kZWwuY3JlYXRlKHZhcnR5cGU9IkdhdXNzaWFuIixyYW5nZT0yMCxuZGltPTIpDQoNCnNpbWEwID0gc2ltX2EwKGNvYWxfZGIpDQoNCg0KcGxvdChzaW1hMCwgcG9zLmxlZ2VuZD0wKQ0KcGxvdChkYi5sb2NhdGUoY29hbF9kYiwgIkFjY3VtdWxhdGlvbiIsICJ6IiksIGFkZCA9IFQpDQpgYGANCmBgYHtyfQ0KDQpzaW1fYTEgPC0gZnVuY3Rpb24oaW5kYiwgbnNpbT0xKXsNCiAgDQogIGRiLmxvY2F0ZShpbmRiLCAiQWNjdW11bGF0aW9uIiwgInoiKQ0KICBjb2FsX2ExID0gZGIuc2VsKGluZGIsIExRPT0yKQ0KICBjb2FsX2ExID0gZGIubG9jYXRlKGNvYWxfYTEsNiwieiIpDQogIGdhdXNfYTEgPSBtb2RlbC5jcmVhdGUoIkdhdXNzaWFuIiwgcmFuZ2U9MTAsIHNpbGw9OTAwMDAwMCkNCiAgb3V0ZGIgPSBkYi5jcmVhdGUoeDA9YygwLDApLGR4PWMoMSwxKSxueD1jKDIwMCwxMDApKQ0KICBuZWlnaGIgPSBuZWlnaC5jcmVhdGUobmRpbSA9IDIsIHR5cGUgPSAwKQ0KICBzaW1fYTEgPSAgc2ltdHViKGRiaW4gPSBjb2FsX2ExLGRib3V0PW91dGRiLG1vZGVsPWdhdXNfYTEsbmVpZ2ggPSBuZWlnaGIsbWVhbj0xNTAwMCwgbmJzaW11ID0gbnNpbSkNCiAgcmV0dXJuKHNpbV9hMSkNCg0KfQ0KDQpzaW1hMSA9IHNpbV9hMShjb2FsX2RiKQ0KDQpwbG90KHNpbWExLHBvcy5sZWdlbmQ9MikNCnBsb3QoZGIubG9jYXRlKGNvYWxfZGIsICJBY2N1bXVsYXRpb24iLCAieiIpLGFkZD1UKQ0KYGBgDQoqKipRVUVTVElPTioqKjogDQoNCg0KDQpgYGB7cn0NCg0KDQpgYGANCg0KYGBge3J9DQoNCiNDcmVhdGUgbWFza3Mvc2VsZWN0aW9ucyBmb3IgdGhlIEFfMCByZWdpb24gYW5kIEFfMSByZWdpb24NCiNzaW1fbHEwX3NlbCA9IGRiLnNlbChzaW1scSwgU2ltUEdTLkxRLlNGYWMxPT0xKQ0KI3NpbV9scTFfc2VsID0gZGIuc2VsKHNpbWxxLCBTaW1QR1MuTFEuU0ZhYzE9PTIpDQojDQojY3BkYiA9IGRiLmdyaWQuY29weShzaW1fbHEsIHNpbV9hMCwgbmFtZXMgPWRiLmdldG5hbWUoc2ltX2xxLCJ6IiwxKSkNCiMNCiNjcGRiID0gZGIuc2VsKGNwZGIsIENvcHkuU2ltUEdTLkxRLlNGYWMxPT0xKQ0KIw0KI2NwZGIgPSBkYi5sb2NhdGUoY3BkYiwgNCwgInoiKQ0KDQpwbG90KGNwZGIpDQpgYGANCmBgYHtyfQ0KcGxvdChzaW1fYTApDQoNCiNQdWxsIG91dCB2ZWN0b3JzIG9mIHNpbXVsYXRlZCANCnNpbXVsYXRlZF9hMCA9IHNpbV9hMEBpdGVtcyRTaW11LkFjY3VtdWxhdGlvbi5TMQ0Kc2ltdWxhdGVkX2ExID0gc2ltX2ExQGl0ZW1zJFNpbXUuQWNjdW11bGF0aW9uLlMxDQoNCiNSZXRyaWV2ZSB0aGUgc2ltdWxhdGVkIExRIGluZGV4DQojVHVybiBpbnRvIGJpbmFyeSBzZWxlY3Rvci9tYXNrDQptYXNrXzEgPSBzaW1fbHFAaXRlbXMkU2ltUEdTLkxRLlNGYWMxIC0gMQ0KI1JldmVyc2UNCm1hc2tfMCA9IDEgLSBtYXNrXzENCg0KI0NoZWNrIC0gbWFrZSBzdXJlIHRoZSANCmFsbChtYXNrXzAgKyBtYXNrXzEgPT0gMSkNCg0KcHdfbWFwID0gbWFza18wICogc2ltdWxhdGVkX2EwICsgbWFza18xICogc2ltdWxhdGVkX2ExDQpgYGANCg0KTWFkZSB0aGUgbWFwLCBub3cgdG8gcHV0IGl0IGJhY2sgaW50byBSDQoNCmBgYHtyfQ0KDQpqb2luX3NpbXNfem9uYWwgPC0gZnVuY3Rpb24oc2ltMCwgc2ltMSwgem9uZXMpew0KICANCiAgbWFza18xID0gem9uZXMgLSAxDQogIG1hc2tfMCA9IDEgLSBtYXNrXzENCiAgcHdfbWFwID0gbWFza18wICogc2ltMCArIG1hc2tfMSAqIHNpbTENCiAgcmV0dXJuKHB3X21hcCkNCiAgDQp9DQoNCnNpbXVsYXRlZF9hMCA9IHNpbWEwQGl0ZW1zJFNpbXUuQWNjdW11bGF0aW9uLlMxDQpzaW11bGF0ZWRfYTEgPSBzaW1hMUBpdGVtcyRTaW11LkFjY3VtdWxhdGlvbi5TMQ0KDQpqc2ltID0gam9pbl9zaW1zX3pvbmFsKHNpbXVsYXRlZF9hMCxzaW11bGF0ZWRfYTEsc2ltbHFAaXRlbXMkU2ltUEdTLkxRLlNGYWMxKQ0KDQpwbG90KGRiLmxvY2F0ZShkYi5jcmVhdGUoanNpbSx4MD1jKDAsMCksZHg9YygxLDEpLG54PWMoMjAwLDEwMCkpLCJqc2ltIiwieiIpKQ0KDQoNCg0KYGBgDQoNCiMgNy4gQ2Fsb3JpZmljIHZhbHVlDQoNCkNvbXB1dGUgYW5kIHBsb3QgdGhlIGNhbG9yaWZpYyB2YWx1ZSAkQyh4KSA9IFxmcmFje0EoeCl9e1QoeCl9JC4NCg0KYGBge3J9DQoNCg0KDQoNCmN4ID0gYXB3ZGJAaXRlbXMkcHdfbWFwL3NpbXVAaXRlbXMkU2ltdS5UaGlja25lc3MuUzENCg0KY3hkYiA9IGRiLmNyZWF0ZShjeCx4MD1jKDAsMCksZHg9YygxLDEpLG54PWMoMjAwLDEwMCkpDQpjeGRiID0gZGIubG9jYXRlKGN4ZGIsIDQsICJ6IikNCnBsb3QoY3hkYikNCg0KYGBgDQpgYGB7cn0NCmNncmlkID0gZGIuY3JlYXRlKHgwPWMoMCwwKSxkeD1jKDEwLDEwKSxueD1jKDIwLDEwKSkNCiNzaW11DQpwbG90KGJsb2Nrc3RhdChjZ3JpZCwgY3hkYiwgZnVuPSdtZWFuJykpDQoNCnBhbmVsX3EgPWJsb2Nrc3RhdChjZ3JpZCwgY3hkYiwgZnVuPSdtZWFuJykNCmBgYA0KYGBge3J9DQpzZWwgPSBzZWxlY3Rpdml0eShwYW5lbF9xLCBjdXRzID0gc2VxKDEwMDAsMjUwMCw1MCkpDQpgYGANCg0KYGBge3J9DQptaW4oc2ltdUBpdGVtcyRTaW11LlRoaWNrbmVzcy5TMSkNCmBgYA0KIyAxMDAgaXRlcmF0aW9ucyANCg0KYGBge3J9DQpzdGhpY2tzID0gc2ltX3RoaWNrbmVzcyhjb2FsX2RiLCBuc2ltID0gMTAwKQ0Kc2xxcyA9IHNpbV9scShjb2FsX2RiLCBuc2ltID0gMTAwKQ0Kc2ltYTAgPSBzaW1fYTAoY29hbF9kYiwgbnNpbSA9IDEwMCkNCnNpbWExID0gc2ltX2ExKGNvYWxfZGIsIG5zaW0gPSAxMDApDQpgYGANCmBgYHtyfQ0KI2ZvciAoeCBpbiBzbHFzQGl0ZW1zKXsNCiMgIHByaW50KG1lYW4oeCkpDQojfQ0KDQoNCiNUaGUgcnVucyBhcmUgc3RvcmVkIGluIGEgbGlzdCwgc3RhcnRpbmcgYXQgbnVtYmVyIDQgYW5kIGdvaW5nIG9uIGZvciBlYWNoIG9mIHRoZSBzaW11bGF0aW9ucw0KI05lZWQgdG8gDQoNCg0KZm9yIChpZHggaW4gNDoxMDMpew0KICBwcmludChtZWFuKHNscXNAaXRlbXNbW2lkeF1dKSkNCn0NCg0KYGBgDQoNCg0KYGBge3J9DQoNCnNpbXQgPSBzaW1fdGhpY2tuZXNzKGNvYWxfZGIpDQoNCmZvciAoeCBpbiAxOjEwMCl7DQoNCiAgI0VhY2ggaXRlcmF0aW9uLCBuZWVkIHRvOg0KICAjICBDb25kaXRpb25hbGx5IHNpbXVsYXRlIHRoaWNrbmVzcw0KICBzaW10ID0gc2ltX3RoaWNrbmVzcyhjb2FsX2RiKQ0KICAjICBDb25kaXRpb25hbGx5IHNpbXVsYXRlIGxpZ25pdGUgcXVhbGl0eSBpbmRleA0KICBzaW1scSA9IHNpbV9scShjb2FsX2RiKQ0KICAjICBDb25kaXRpb25hbGx5IHNpbXVsYXRlIGFjY3VtdWxhdGlvbnMgQTAgYW5kIEExDQogIHNpbWEwID0gc2ltX2EwKGNvYWxfZGIpDQogIHNpbWExID0gc2ltX2ExKGNvYWxfZGIpDQogICMgIFN0aXRjaCB0b2dldGhlciB0aGUgY29uZGl0aW9uYWwgc2ltdWxhdGlvbnMNCiAgc2ltdWxhdGVkX2EwID0gc2ltYTBAaXRlbXMkU2ltdS5BY2N1bXVsYXRpb24uUzENCiAgc2ltdWxhdGVkX2ExID0gc2ltYTFAaXRlbXMkU2ltdS5BY2N1bXVsYXRpb24uUzENCiAgbWFzayA9IHNpbWxxQGl0ZW1zJFNpbVBHUy5MUS5TRmFjMQ0KICBqc2ltID0gam9pbl9zaW1zX3pvbmFsKHNpbXVsYXRlZF9hMCxzaW11bGF0ZWRfYTEsbWFzaykNCiAgDQogIGN4ID0ganNpbSAvIHNpbXRAaXRlbXMkU2ltdS5UaGlja25lc3MuUzENCiAgDQogIGN4ZGIgPSBkYi5jcmVhdGUoY3gseDA9YygwLDApLGR4PWMoMSwxKSxueD1jKDIwMCwxMDApKQ0KICBjeGRiID0gZGIubG9jYXRlKGN4ZGIsICJjeCIsICJ6IikNCiAgDQogIGNncmlkID0gZGIuY3JlYXRlKHgwPWMoMCwwKSxkeD1jKDEwLDEwKSxueD1jKDIwLDEwKSkNCiAgDQogIHBhbmVsX3EgPSBibG9ja3N0YXQoY2dyaWQsIGN4ZGIsIGZ1bj0nbWVhbicpDQogIA0KICBwcmludChkYi5zdGF0KHBhbmVsX3EsIGZ1bj0ibWVhbiIpKQ0KDQp9DQoNCg0KYGBgDQoNCg==</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIlIgTm90ZWJvb2siDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCmVkaXRvcl9vcHRpb25zOiANCiAgY2h1bmtfb3V0cHV0X3R5cGU6IGlubGluZQ0KLS0tDQoNCg0KDQpgYGB7cn0NCnJtKGxpc3Q9bHMoKSkNCg0KY29hbF9kZiA9IHJlYWQuY3N2KGZpbGUgPSAnZGF0YXNldF9OaWNob2xhcy1Ub255LmNzdicpDQoNCg0KY29hbF9kZiRMUSA9IGNvYWxfZGYkTFEgKyAxDQoNCmNvYWxfZGYNCmBgYA0KYGBge3J9DQpwbG90KGNvYWxfZGYkeCwgY29hbF9kZiR5LCBjZXggPSBjb2FsX2RmJFRoaWNrbmVzcy8xMC4wKQ0KYGBgDQpgYGB7cn0NCnByaW50KG1lYW4oY29hbF9kZiRUaGlja25lc3MpKQ0KcHJpbnQodmFyKGNvYWxfZGYkVGhpY2tuZXNzKSkNCmBgYA0KYGBge3J9DQpwcmludChtZWFuKGNvYWxfZGYkQWNjdW11bGF0aW9uKSkNCnByaW50KHZhcihjb2FsX2RmJEFjY3VtdWxhdGlvbikpDQpgYGANCg0KDQoNCmBgYHtyfQ0KaGlzdChjb2FsX2RmJFRoaWNrbmVzcykNCmBgYA0KYGBge3J9DQpoaXN0KGNvYWxfZGYkQWNjdW11bGF0aW9uKQ0KYGBgDQoNCmBgYHtyfQ0KbGlicmFyeShSR2Vvc3RhdHMpDQoNCg0KDQpjb2FsX2RiIDwtIGRiLmNyZWF0ZShjb2FsX2RmKQ0KDQpjb2FsX2RiID0gZGIubG9jYXRlKGNvYWxfZGIsMzo0LCJ4IikNCmNvYWxfZGIgPSBkYi5sb2NhdGUoY29hbF9kYiw1LCJ6IikNCg0KY29hbF9kYg0KcGxvdChjb2FsX2RiKQ0KYGBgDQoNCiMgNC4gQ29uZGl0aW9uYWwgc2ltdWxhdGlvbiBvZiB0aGlja25lc3MgVCBvbiB0aGUgZGlzY3JldGl6YXRpb24gZ3JpZA0KDQpodHRwOi8vcmdlb3N0YXRzLmZyZWUuZnIvaHRtbC9zaW1wZ3MuaHRtbA0KDQpgYGB7cn0NCg0KI3NpbV90aGlja25lc3MgPC0gZnVuY3Rpb24oKXsNCiN9DQoNCg0Kc2ltX3RoaWNrbmVzcyA8LSBmdW5jdGlvbihpbmRiLCBuc2ltID0gMSl7DQogIGluZGIgPSBkYi5sb2NhdGUoaW5kYiwgIlRoaWNrbmVzcyIsICJ6IikNCiAgDQogIFRtb2RlbD1tb2RlbC5jcmVhdGUodmFydHlwZT0iR2F1c3NpYW4iLHJhbmdlPTIwLHNpbGw9NCxuZGltPTIpDQogIG91dGRiID0gZGIuY3JlYXRlKHgwPWMoMCwwKSxkeD1jKDEsMSksbng9YygyMDAsMTAwKSkNCiAgbmVpZ2hiID0gbmVpZ2guY3JlYXRlKG5kaW0gPSAyLCB0eXBlID0gMCkNCiAgc2ltdSA8LSBzaW10dWIobmJ0dWJhID0gNDUwLCBkYmluPWluZGIsZGJvdXQ9b3V0ZGIsbW9kZWw9VG1vZGVsLG5laWdoID0gbmVpZ2hiLG1lYW4gPSBjKDEwKSwgbmJzaW11ID0gbnNpbSkNCiAgcmV0dXJuKHNpbXUpDQoNCn0NCg0Kc2ltdSA9IHNpbV90aGlja25lc3MoY29hbF9kYikNCg0KcGxvdChzaW11KQ0KcGxvdChjb2FsX2RiLCBhZGQ9VCkNCmBgYA0KYGBge3J9DQpoaXN0KHNpbXVAaXRlbXMkU2ltdS5UaGlja25lc3MuUzEpDQpjZ3JpZCA9IGRiLmNyZWF0ZSh4MD1jKDAsMCksZHg9YygxMCwxMCksbng9YygyMCwxMCkpDQojc2ltdQ0KcGxvdChibG9ja3N0YXQoY2dyaWQsIHNpbXUsIGZ1bj0nbWVhbicpKQ0KYGBgDQoNCiMgNS4gQ29uZGl0aW9uYWwgc2ltdWxhdGlvbiBvZiBMUSAobGlnbml0ZSBxdWFsaXR5IGluZGV4KQ0KDQpNb2RlbGxlZCBhcyBhIHRocmVzaG9sZGVkIEdSRiB3aXRoIGNvbnN0YW50IHByb3BvcnRpb24gMC41LiANClVuZGVybHlpbmcgR1JGIGlzIHN0YW5kYXJkICgkXG11ID0gMCQgYW5kICRcc2lnbWFeezJ9ID0gMSQpIGFuZCBHYXVzc2lhbiBjb3ZhcmlhbmNlIHdpdGggcmFuZ2UgNTAuIA0KDQpGaXJzdCwgdXBkYXRlIHRoZSANCg0KYGBge3J9DQoNCnByb3BzID0gdGFibGUoY29hbF9kYlssIkxRIl0pIC8gY29hbF9kYiRuc2FtcGxlcw0KcHJvcHMgPSBjKDAuNSwwLjUpDQpydWxlID0gcnVsZS5jcmVhdGUoYygiUyIsICJGMSIsICJGMiIpKQ0KcGxvdChydWxlLCBwcm9wcz1wcm9wcywgY29sPWMoImJsdWUiLCJ5ZWxsb3ciKSwgdGl0bGU9IkxpdGhvdHlwZSBSdWxlIikNCmBgYA0KDQpgYGB7cn0NCg0KDQpzaW1fbHEgPC0gZnVuY3Rpb24oaW5kYiwgbnNpbSA9IDEpew0KICANCiAgaW5kYiA9IGRiLmxvY2F0ZShpbmRiLCAiTFEiLCAieiIpDQogIHByb3BzID0gYygwLjUsMC41KQ0KICBydWxlID0gcnVsZS5jcmVhdGUoYygiUyIsICJGMSIsICJGMiIpKQ0KICB2b2lzaW4gPSBuZWlnaC5jcmVhdGUodHlwZT0wKQ0KICBvdXRkYiA9IGRiLmNyZWF0ZSh4MD1jKDAsMCksZHg9YygxLDEpLG54PWMoMjAwLDEwMCkpDQogIGdhdXMgPSBtb2RlbC5jcmVhdGUoIkdhdXNzaWFuIiwgcmFuZ2U9NTApDQogIHNpbWxxID0gc2ltcGdzKGRib3V0PW91dGRiLCBkYmluPWluZGIsIHJ1bGU9cnVsZSxwcm9wcz1jKDAuNSwgMC41KSwgbW9kZWwxPWdhdXMsIG5laWdoID0gdm9pc2luLCBuYnNpbXUgPSBuc2ltKQ0KICByZXR1cm4oc2ltbHEpDQoNCn0NCg0Kc2ltbHEgPSBzaW1fbHEoY29hbF9kYikNCg0KcGxvdChzaW1scSkNCnBsb3QoZGIubG9jYXRlKGNvYWxfZGIsICJMUSIsICJ6IiksIGFkZCA9IFQpDQpgYGANCmBgYHtyfQ0KaGlzdChzaW1scUBpdGVtcyRTaW1QR1MuTFEuU0ZhYzEpDQpgYGANCg0KDQoNCg0KIyA2LiBDb25kaXRpb25hbCBzaW11bGF0aW9uIG9mIHRoZSBhY2N1bXVsYXRpb24gQSANCg0KanVzdCBjb250aW51ZSB3aXRoIHRoZSBzaW11bGF0aW9uIGZyb20gYmVmb3JlDQoNCldoZXJlICRMUSh4KSA9IDAkLCAgJFxtdSA9IDUwMDAkIGFuZCAkXHNpZ21hXnsyfSA9IDI1MDAwMCQNCg0KV2hlcmUgJExRKHgpID0gMSQsICRcbXUgPSAxNTAwMCQgYW5kICRcc2lnbWFeezJ9ID0gOVx0aW1lczEwXjYkLg0KDQpCb3RoIGhhdmUgR2F1c3NpYW4gY292YXJpYW5jZSB3aXRoIHJhbmdlIDEwLiANCg0KKioqUVVFU1RJT046KioqIHdoZXJlIHRvIHNldCB0aGUgdmFyaWFuY2U/IHdlIHNldCB0aGUgbWVhbiBpbiB0aGUgc2ltdHViIGZ1bmN0aW9uLiANCkRvZXMgdGhpcyBnbyBpbiB0aGUgInNpbGwiIGFyZ3VtZW50Pw0KDQpgYGB7cn0NCg0Kc2ltX2EwIDwtIGZ1bmN0aW9uKGluZGIsIG5zaW09MSl7DQogIA0KICBpbmRiID0gZGIubG9jYXRlKGluZGIsICJBY2N1bXVsYXRpb24iLCAieiIpDQogIGNvYWxfYTAgPSBkYi5zZWwoaW5kYiwgTFE9PTEpDQogIGdhdXNfYTAgPSBtb2RlbC5jcmVhdGUoIkdhdXNzaWFuIiwgcmFuZ2U9MTAsIHNpbGw9MjUwMDAwKQ0KICBvdXRkYiA9IGRiLmNyZWF0ZSh4MD1jKDAsMCksZHg9YygxLDEpLG54PWMoMjAwLDEwMCkpDQogIG5laWdoYiA9IG5laWdoLmNyZWF0ZShuZGltID0gMiwgdHlwZSA9IDApDQogIHNpbSA9ICBzaW10dWIoZGJpbiA9IGNvYWxfYTAsZGJvdXQ9b3V0ZGIsbW9kZWw9Z2F1c19hMCxuZWlnaCA9IG5laWdoYixtZWFuPTUwMDAsIG5ic2ltdSA9IG5zaW0pDQogIHJldHVybihzaW0pDQogIA0KfQ0KDQoNCiNUbW9kZWw9bW9kZWwuY3JlYXRlKHZhcnR5cGU9IkdhdXNzaWFuIixyYW5nZT0yMCxuZGltPTIpDQoNCnNpbWEwID0gc2ltX2EwKGNvYWxfZGIpDQoNCg0KcGxvdChzaW1hMCwgcG9zLmxlZ2VuZD0wKQ0KcGxvdChkYi5sb2NhdGUoY29hbF9kYiwgIkFjY3VtdWxhdGlvbiIsICJ6IiksIGFkZCA9IFQpDQpgYGANCmBgYHtyfQ0KDQpzaW1fYTEgPC0gZnVuY3Rpb24oaW5kYiwgbnNpbT0xKXsNCiAgDQogIGRiLmxvY2F0ZShpbmRiLCAiQWNjdW11bGF0aW9uIiwgInoiKQ0KICBjb2FsX2ExID0gZGIuc2VsKGluZGIsIExRPT0yKQ0KICBjb2FsX2ExID0gZGIubG9jYXRlKGNvYWxfYTEsNiwieiIpDQogIGdhdXNfYTEgPSBtb2RlbC5jcmVhdGUoIkdhdXNzaWFuIiwgcmFuZ2U9MTAsIHNpbGw9OTAwMDAwMCkNCiAgb3V0ZGIgPSBkYi5jcmVhdGUoeDA9YygwLDApLGR4PWMoMSwxKSxueD1jKDIwMCwxMDApKQ0KICBuZWlnaGIgPSBuZWlnaC5jcmVhdGUobmRpbSA9IDIsIHR5cGUgPSAwKQ0KICBzaW1fYTEgPSAgc2ltdHViKGRiaW4gPSBjb2FsX2ExLGRib3V0PW91dGRiLG1vZGVsPWdhdXNfYTEsbmVpZ2ggPSBuZWlnaGIsbWVhbj0xNTAwMCwgbmJzaW11ID0gbnNpbSkNCiAgcmV0dXJuKHNpbV9hMSkNCg0KfQ0KDQpzaW1hMSA9IHNpbV9hMShjb2FsX2RiKQ0KDQpwbG90KHNpbWExLHBvcy5sZWdlbmQ9MikNCnBsb3QoZGIubG9jYXRlKGNvYWxfZGIsICJBY2N1bXVsYXRpb24iLCAieiIpLGFkZD1UKQ0KYGBgDQoqKipRVUVTVElPTioqKjogDQoNCg0KDQpgYGB7cn0NCg0KDQpgYGANCg0KYGBge3J9DQoNCiNDcmVhdGUgbWFza3Mvc2VsZWN0aW9ucyBmb3IgdGhlIEFfMCByZWdpb24gYW5kIEFfMSByZWdpb24NCiNzaW1fbHEwX3NlbCA9IGRiLnNlbChzaW1scSwgU2ltUEdTLkxRLlNGYWMxPT0xKQ0KI3NpbV9scTFfc2VsID0gZGIuc2VsKHNpbWxxLCBTaW1QR1MuTFEuU0ZhYzE9PTIpDQojDQojY3BkYiA9IGRiLmdyaWQuY29weShzaW1fbHEsIHNpbV9hMCwgbmFtZXMgPWRiLmdldG5hbWUoc2ltX2xxLCJ6IiwxKSkNCiMNCiNjcGRiID0gZGIuc2VsKGNwZGIsIENvcHkuU2ltUEdTLkxRLlNGYWMxPT0xKQ0KIw0KI2NwZGIgPSBkYi5sb2NhdGUoY3BkYiwgNCwgInoiKQ0KDQpwbG90KGNwZGIpDQpgYGANCmBgYHtyfQ0KcGxvdChzaW1fYTApDQoNCiNQdWxsIG91dCB2ZWN0b3JzIG9mIHNpbXVsYXRlZCANCnNpbXVsYXRlZF9hMCA9IHNpbV9hMEBpdGVtcyRTaW11LkFjY3VtdWxhdGlvbi5TMQ0Kc2ltdWxhdGVkX2ExID0gc2ltX2ExQGl0ZW1zJFNpbXUuQWNjdW11bGF0aW9uLlMxDQoNCiNSZXRyaWV2ZSB0aGUgc2ltdWxhdGVkIExRIGluZGV4DQojVHVybiBpbnRvIGJpbmFyeSBzZWxlY3Rvci9tYXNrDQptYXNrXzEgPSBzaW1fbHFAaXRlbXMkU2ltUEdTLkxRLlNGYWMxIC0gMQ0KI1JldmVyc2UNCm1hc2tfMCA9IDEgLSBtYXNrXzENCg0KI0NoZWNrIC0gbWFrZSBzdXJlIHRoZSANCmFsbChtYXNrXzAgKyBtYXNrXzEgPT0gMSkNCg0KcHdfbWFwID0gbWFza18wICogc2ltdWxhdGVkX2EwICsgbWFza18xICogc2ltdWxhdGVkX2ExDQpgYGANCg0KTWFkZSB0aGUgbWFwLCBub3cgdG8gcHV0IGl0IGJhY2sgaW50byBSDQoNCmBgYHtyfQ0KDQpqb2luX3NpbXNfem9uYWwgPC0gZnVuY3Rpb24oc2ltMCwgc2ltMSwgem9uZXMpew0KICANCiAgbWFza18xID0gem9uZXMgLSAxDQogIG1hc2tfMCA9IDEgLSBtYXNrXzENCiAgcHdfbWFwID0gbWFza18wICogc2ltMCArIG1hc2tfMSAqIHNpbTENCiAgcmV0dXJuKHB3X21hcCkNCiAgDQp9DQoNCnNpbXVsYXRlZF9hMCA9IHNpbWEwQGl0ZW1zJFNpbXUuQWNjdW11bGF0aW9uLlMxDQpzaW11bGF0ZWRfYTEgPSBzaW1hMUBpdGVtcyRTaW11LkFjY3VtdWxhdGlvbi5TMQ0KDQpqc2ltID0gam9pbl9zaW1zX3pvbmFsKHNpbXVsYXRlZF9hMCxzaW11bGF0ZWRfYTEsc2ltbHFAaXRlbXMkU2ltUEdTLkxRLlNGYWMxKQ0KDQpwbG90KGRiLmxvY2F0ZShkYi5jcmVhdGUoanNpbSx4MD1jKDAsMCksZHg9YygxLDEpLG54PWMoMjAwLDEwMCkpLCJqc2ltIiwieiIpKQ0KDQoNCg0KYGBgDQoNCiMgNy4gQ2Fsb3JpZmljIHZhbHVlDQoNCkNvbXB1dGUgYW5kIHBsb3QgdGhlIGNhbG9yaWZpYyB2YWx1ZSAkQyh4KSA9IFxmcmFje0EoeCl9e1QoeCl9JC4NCg0KYGBge3J9DQoNCg0KDQoNCmN4ID0gYXB3ZGJAaXRlbXMkcHdfbWFwL3NpbXVAaXRlbXMkU2ltdS5UaGlja25lc3MuUzENCg0KY3hkYiA9IGRiLmNyZWF0ZShjeCx4MD1jKDAsMCksZHg9YygxLDEpLG54PWMoMjAwLDEwMCkpDQpjeGRiID0gZGIubG9jYXRlKGN4ZGIsIDQsICJ6IikNCnBsb3QoY3hkYikNCg0KYGBgDQpgYGB7cn0NCmNncmlkID0gZGIuY3JlYXRlKHgwPWMoMCwwKSxkeD1jKDEwLDEwKSxueD1jKDIwLDEwKSkNCiNzaW11DQpwbG90KGJsb2Nrc3RhdChjZ3JpZCwgY3hkYiwgZnVuPSdtZWFuJykpDQoNCnBhbmVsX3EgPWJsb2Nrc3RhdChjZ3JpZCwgY3hkYiwgZnVuPSdtZWFuJykNCmBgYA0KYGBge3J9DQpzZWwgPSBzZWxlY3Rpdml0eShwYW5lbF9xLCBjdXRzID0gc2VxKDEwMDAsMjUwMCw1MCkpDQpgYGANCg0KYGBge3J9DQptaW4oc2ltdUBpdGVtcyRTaW11LlRoaWNrbmVzcy5TMSkNCmBgYA0KIyAxMDAgaXRlcmF0aW9ucyANCg0KYGBge3J9DQpzdGhpY2tzID0gc2ltX3RoaWNrbmVzcyhjb2FsX2RiLCBuc2ltID0gMTAwKQ0Kc2xxcyA9IHNpbV9scShjb2FsX2RiLCBuc2ltID0gMTAwKQ0Kc2ltYTAgPSBzaW1fYTAoY29hbF9kYiwgbnNpbSA9IDEwMCkNCnNpbWExID0gc2ltX2ExKGNvYWxfZGIsIG5zaW0gPSAxMDApDQpgYGANCmBgYHtyfQ0KI2ZvciAoeCBpbiBzbHFzQGl0ZW1zKXsNCiMgIHByaW50KG1lYW4oeCkpDQojfQ0KDQoNCiNUaGUgcnVucyBhcmUgc3RvcmVkIGluIGEgbGlzdCwgc3RhcnRpbmcgYXQgbnVtYmVyIDQgYW5kIGdvaW5nIG9uIGZvciBlYWNoIG9mIHRoZSBzaW11bGF0aW9ucw0KI05lZWQgdG8gDQoNCg0KZm9yIChpZHggaW4gNDoxMDMpew0KICB0aGlja24gPSBzdGhpY2tzQGl0ZW1zW1tpZHhdXQ0KICBzaW1scSA9IHNscXNAaXRlbXNbW2lkeF1dDQogIHNpbXVsYXRlZF9hMCA9IHNpbWEwQGl0ZW1zW1tpZHhdXQ0KICBzaW11bGF0ZWRfYTEgPSBzaW1hMUBpdGVtc1tbaWR4XV0NCiAgYWpzaW0gPSBqb2luX3NpbXNfem9uYWwoc2ltdWxhdGVkX2EwLHNpbXVsYXRlZF9hMSxzaW1scSkNCiAgY3ggPSBhanNpbS90aGlja24NCiAgY3hkYiA9IGRiLmNyZWF0ZShjeCx4MD1jKDAsMCksZHg9YygxLDEpLG54PWMoMjAwLDEwMCkpDQogIGN4ZGIgPSBkYi5sb2NhdGUoY3hkYiwgNCwgInoiKQ0KICANCiAgY2dyaWQgPSBkYi5jcmVhdGUoeDA9YygwLDApLGR4PWMoMTAsMTApLG54PWMoMjAsMTApKQ0KICBwYW5lbF9xID0gYmxvY2tzdGF0KGNncmlkLCBjeGRiLCBmdW49J21lYW4nKQ0KICANCiAgcHJpbnQoZGIuc3RhdChwYW5lbF9xLCBmdW49Im1lYW4iKSkNCg0KfQ0KDQpgYGANCg0KDQpgYGB7cn0NCg0Kc2ltdCA9IHNpbV90aGlja25lc3MoY29hbF9kYikNCg0KZm9yICh4IGluIDE6MTAwKXsNCg0KICAjRWFjaCBpdGVyYXRpb24sIG5lZWQgdG86DQogICMgIENvbmRpdGlvbmFsbHkgc2ltdWxhdGUgdGhpY2tuZXNzDQogIHNpbXQgPSBzaW1fdGhpY2tuZXNzKGNvYWxfZGIpDQogICMgIENvbmRpdGlvbmFsbHkgc2ltdWxhdGUgbGlnbml0ZSBxdWFsaXR5IGluZGV4DQogIHNpbWxxID0gc2ltX2xxKGNvYWxfZGIpDQogICMgIENvbmRpdGlvbmFsbHkgc2ltdWxhdGUgYWNjdW11bGF0aW9ucyBBMCBhbmQgQTENCiAgc2ltYTAgPSBzaW1fYTAoY29hbF9kYikNCiAgc2ltYTEgPSBzaW1fYTEoY29hbF9kYikNCiAgIyAgU3RpdGNoIHRvZ2V0aGVyIHRoZSBjb25kaXRpb25hbCBzaW11bGF0aW9ucw0KICBzaW11bGF0ZWRfYTAgPSBzaW1hMEBpdGVtcyRTaW11LkFjY3VtdWxhdGlvbi5TMQ0KICBzaW11bGF0ZWRfYTEgPSBzaW1hMUBpdGVtcyRTaW11LkFjY3VtdWxhdGlvbi5TMQ0KICBtYXNrID0gc2ltbHFAaXRlbXMkU2ltUEdTLkxRLlNGYWMxDQogIGpzaW0gPSBqb2luX3NpbXNfem9uYWwoc2ltdWxhdGVkX2EwLHNpbXVsYXRlZF9hMSxtYXNrKQ0KICANCiAgY3ggPSBqc2ltIC8gc2ltdEBpdGVtcyRTaW11LlRoaWNrbmVzcy5TMQ0KICANCiAgY3hkYiA9IGRiLmNyZWF0ZShjeCx4MD1jKDAsMCksZHg9YygxLDEpLG54PWMoMjAwLDEwMCkpDQogIGN4ZGIgPSBkYi5sb2NhdGUoY3hkYiwgImN4IiwgInoiKQ0KICANCiAgY2dyaWQgPSBkYi5jcmVhdGUoeDA9YygwLDApLGR4PWMoMTAsMTApLG54PWMoMjAsMTApKQ0KICANCiAgcGFuZWxfcSA9IGJsb2Nrc3RhdChjZ3JpZCwgY3hkYiwgZnVuPSdtZWFuJykNCiAgDQogIHByaW50KGRiLnN0YXQocGFuZWxfcSwgZnVuPSJtZWFuIikpDQoNCn0NCg0KDQpgYGANCg0K</div>
 
 
 
