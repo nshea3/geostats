@@ -62,13 +62,13 @@ http://rgeostats.free.fr/html/simpgs.html
 #}
 
 
-sim_thickness <- function(indb){
+sim_thickness <- function(indb, nsim = 1){
   indb = db.locate(indb, "Thickness", "z")
   
   Tmodel=model.create(vartype="Gaussian",range=20,sill=4,ndim=2)
   outdb = db.create(x0=c(0,0),dx=c(1,1),nx=c(200,100))
   neighb = neigh.create(ndim = 2, type = 0)
-  simu <- simtub(nbtuba = 450, dbin=indb,dbout=outdb,model=Tmodel,neigh =     neighb,mean = c(10))
+  simu <- simtub(nbtuba = 450, dbin=indb,dbout=outdb,model=Tmodel,neigh = neighb,mean = c(10), nbsimu = nsim)
   return(simu)
 
 }
@@ -119,6 +119,9 @@ simlq = sim_lq(coal_db)
 
 plot(simlq)
 plot(db.locate(coal_db, "LQ", "z"), add = T)
+```
+```{r}
+hist(simlq@items$SimPGS.LQ.SFac1)
 ```
 
 
@@ -185,28 +188,38 @@ plot(db.locate(coal_db, "Accumulation", "z"),add=T)
 
 
 ```{r}
-sim_lq0_sel = db.sel(simlq, SimPGS.LQ.SFac1==1)
-sim_lq1_sel = db.sel(simlq, SimPGS.LQ.SFac1==2)
+
 
 ```
 
 ```{r}
-cpdb = db.grid.copy(sim_lq, sim_a0, names =db.getname(sim_lq,"z",1))
 
-cpdb = db.sel(cpdb, Copy.SimPGS.LQ.SFac1==1)
-
-cpdb = db.locate(cpdb, 4, "z")
+#Create masks/selections for the A_0 region and A_1 region
+#sim_lq0_sel = db.sel(simlq, SimPGS.LQ.SFac1==1)
+#sim_lq1_sel = db.sel(simlq, SimPGS.LQ.SFac1==2)
+#
+#cpdb = db.grid.copy(sim_lq, sim_a0, names =db.getname(sim_lq,"z",1))
+#
+#cpdb = db.sel(cpdb, Copy.SimPGS.LQ.SFac1==1)
+#
+#cpdb = db.locate(cpdb, 4, "z")
 
 plot(cpdb)
 ```
 ```{r}
 plot(sim_a0)
+
+#Pull out vectors of simulated 
 simulated_a0 = sim_a0@items$Simu.Accumulation.S1
 simulated_a1 = sim_a1@items$Simu.Accumulation.S1
 
+#Retrieve the simulated LQ index
+#Turn into binary selector/mask
 mask_1 = sim_lq@items$SimPGS.LQ.SFac1 - 1
+#Reverse
 mask_0 = 1 - mask_1
 
+#Check - make sure the 
 all(mask_0 + mask_1 == 1)
 
 pw_map = mask_0 * simulated_a0 + mask_1 * simulated_a1
@@ -215,8 +228,25 @@ pw_map = mask_0 * simulated_a0 + mask_1 * simulated_a1
 Made the map, now to put it back into R
 
 ```{r}
-apwdb = db.create(pw_map,x0=c(0,0),dx=c(1,1),nx=c(200,100))
-plot(db.locate(apwdb, 4, "z"), pos.legend = 3)
+
+join_sims_zonal <- function(sim0, sim1, zones){
+  
+  mask_1 = zones - 1
+  mask_0 = 1 - mask_1
+  pw_map = mask_0 * sim0 + mask_1 * sim1
+  return(pw_map)
+  
+}
+
+simulated_a0 = sima0@items$Simu.Accumulation.S1
+simulated_a1 = sima1@items$Simu.Accumulation.S1
+
+jsim = join_sims_zonal(simulated_a0,simulated_a1,simlq@items$SimPGS.LQ.SFac1)
+
+plot(db.locate(db.create(jsim,x0=c(0,0),dx=c(1,1),nx=c(200,100)),"jsim","z"))
+
+
+
 ```
 
 # 7. Calorific value
@@ -224,6 +254,9 @@ plot(db.locate(apwdb, 4, "z"), pos.legend = 3)
 Compute and plot the calorific value $C(x) = \frac{A(x)}{T(x)}$.
 
 ```{r}
+
+
+
 
 cx = apwdb@items$pw_map/simu@items$Simu.Thickness.S1
 
@@ -245,5 +278,52 @@ sel = selectivity(panel_q, cuts = seq(1000,2500,50))
 
 ```{r}
 min(simu@items$Simu.Thickness.S1)
+```
+# 100 iterations 
+
+```{r}
+sthicks = sim_thickness(coal_db, nsim = 100)
+```
+```{r}
+for (x in sthicks@items){
+  print(mean(x))
+}
+```
+
+
+```{r}
+
+simt = sim_thickness(coal_db)
+
+for (x in 1:100){
+
+  #Each iteration, need to:
+  #  Conditionally simulate thickness
+  simt = sim_thickness(coal_db)
+  #  Conditionally simulate lignite quality index
+  simlq = sim_lq(coal_db)
+  #  Conditionally simulate accumulations A0 and A1
+  sima0 = sim_a0(coal_db)
+  sima1 = sim_a1(coal_db)
+  #  Stitch together the conditional simulations
+  simulated_a0 = sima0@items$Simu.Accumulation.S1
+  simulated_a1 = sima1@items$Simu.Accumulation.S1
+  mask = simlq@items$SimPGS.LQ.SFac1
+  jsim = join_sims_zonal(simulated_a0,simulated_a1,mask)
+  
+  cx = jsim / simt@items$Simu.Thickness.S1
+  
+  cxdb = db.create(cx,x0=c(0,0),dx=c(1,1),nx=c(200,100))
+  cxdb = db.locate(cxdb, "cx", "z")
+  
+  cgrid = db.create(x0=c(0,0),dx=c(10,10),nx=c(20,10))
+  
+  panel_q = blockstat(cgrid, cxdb, fun='mean')
+  
+  print(db.stat(panel_q, fun="mean"))
+
+}
+
+
 ```
 
