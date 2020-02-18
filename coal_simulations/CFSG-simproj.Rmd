@@ -57,6 +57,10 @@ plot(coal_db)
 http://rgeostats.free.fr/html/simpgs.html
 
 ```{r}
+
+#sim_thickness <- function(){
+#}
+
 Tmodel=model.create(vartype="Gaussian",range=20,sill=4,ndim=2)
 
 outdb = db.create(x0=c(0,0),dx=c(1,1),nx=c(200,100))
@@ -143,7 +147,6 @@ plot(coal_a0, add=T)
 coal_a1 = db.sel(coal_db, LQ==2)
 coal_a1 = db.locate(coal_db,6,"z")
 gaus_a1 = model.create("Gaussian", range=10, sill=9000000)
-#Tmodel=model.create(vartype="Gaussian",range=20,ndim=2)
 
 
 sim_a1 =  simtub(dbin = coal_a1,dbout=outdb,model=gaus_a1,neigh = neighb,mean=15000)
@@ -205,5 +208,33 @@ Made the map, now to put it back into R
 ```{r}
 apwdb = db.create(pw_map,x0=c(0,0),dx=c(1,1),nx=c(200,100))
 plot(db.locate(apwdb, 4, "z"))
+```
+
+# 7. Calorific value
+
+Compute and plot the calorific value $C(x) = \frac{A(x)}{T(x)}$.
+
+```{r}
+
+cx = apwdb@items$pw_map/simu@items$Simu.Thickness.S1
+
+cxdb = db.create(cx,x0=c(0,0),dx=c(1,1),nx=c(200,100))
+cxdb = db.locate(cxdb, 4, "z")
+plot(cxdb)
+
+```
+```{r}
+cgrid = db.create(x0=c(0,0),dx=c(10,10),nx=c(20,10))
+#simu
+plot(blockstat(cgrid, cxdb, fun='mean'))
+
+panel_q =blockstat(cgrid, cxdb, fun='mean')
+```
+```{r}
+selectivity(panel_q)
+```
+
+```{r}
+min(simu@items$Simu.Thickness.S1)
 ```
 
