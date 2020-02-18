@@ -61,13 +61,19 @@ http://rgeostats.free.fr/html/simpgs.html
 #sim_thickness <- function(){
 #}
 
-Tmodel=model.create(vartype="Gaussian",range=20,sill=4,ndim=2)
 
-outdb = db.create(x0=c(0,0),dx=c(1,1),nx=c(200,100))
+sim_thickness <- function(indb){
+  indb = db.locate(indb, "Thickness", "z")
+  
+  Tmodel=model.create(vartype="Gaussian",range=20,sill=4,ndim=2)
+  outdb = db.create(x0=c(0,0),dx=c(1,1),nx=c(200,100))
+  neighb = neigh.create(ndim = 2, type = 0)
+  simu <- simtub(nbtuba = 450, dbin=indb,dbout=outdb,model=Tmodel,neigh =     neighb,mean = c(10))
+  return(simu)
 
-neighb = neigh.create(ndim = 2, type = 0)
+}
 
-simu <- simtub(nbtuba = 450, dbin=coal_db,dbout=outdb,model=Tmodel,neigh = neighb,mean = c(10))
+simu = sim_thickness(coal_db)
 
 plot(simu)
 plot(coal_db, add=T)
@@ -96,17 +102,23 @@ plot(rule, props=props, col=c("blue","yellow"), title="Lithotype Rule")
 
 ```{r}
 
-coal_db = db.locate(coal_db,7,'z')
-plot(coal_df$x, coal_df$y, pch = coal_df$LQ)
 
+sim_lq <- function(indb){
+  
+  indb = db.locate(indb, "LQ", "z")
+  props = c(0.5,0.5)
+  rule = rule.create(c("S", "F1", "F2"))
+  voisin = neigh.create(type=0)
+  outdb = db.create(x0=c(0,0),dx=c(1,1),nx=c(200,100))
+  gaus = model.create("Gaussian", range=50)
+  sim_lq = simpgs(dbout=outdb, dbin=indb, rule=rule,props=c(0.5, 0.5), model1=gaus, neigh = voisin)
 
-voisin = neigh.create(type=0)
-gaus = model.create("Gaussian", range=50)
+}
 
-sim_lq = simpgs(dbout=outdb, dbin=coal_db, rule=rule,props=c(0.5, 0.5), model1=gaus, neigh = voisin)
-coal_db
-plot(sim_lq)
-plot(coal_db, add = T)
+simlq = sim_lq(coal_db)
+
+plot(simlq)
+plot(db.locate(coal_db, "LQ", "z"), add = T)
 ```
 
 
@@ -124,58 +136,57 @@ Both have Gaussian covariance with range 10.
 
 ***QUESTION:*** where to set the variance? we set the mean in the simtub function. 
 Does this go in the "sill" argument?
-```{r}
-
-```
 
 ```{r}
-coal_a0 = db.sel(coal_db, LQ==1)
-coal_a0 = db.locate(coal_a0,6,"z")
 
-gaus_a0 = model.create("Gaussian", range=10, sill=250000)
+sim_a0 <- function(indb){
+  
+  indb = db.locate(indb, "Accumulation", "z")
+  coal_a0 = db.sel(indb, LQ==1)
+  gaus_a0 = model.create("Gaussian", range=10, sill=250000)
+  outdb = db.create(x0=c(0,0),dx=c(1,1),nx=c(200,100))
+  neighb = neigh.create(ndim = 2, type = 0)
+  sim =  simtub(dbin = coal_a0,dbout=outdb,model=gaus_a0,neigh = neighb,mean=5000)
+  return(sim)
+  
+}
+
+
 #Tmodel=model.create(vartype="Gaussian",range=20,ndim=2)
 
+sima0 = sim_a0(coal_db)
 
-sim_a0 =  simtub(dbin = coal_a0,dbout=outdb,model=gaus_a0,neigh = neighb,mean=5000)
 
-plot(sim_a0, pos.legend=2)
-plot(coal_a0, add=T)
+plot(sima0, pos.legend=0)
+plot(db.locate(coal_db, "Accumulation", "z"), add = T)
 ```
 ```{r}
-coal_a1 = db.sel(coal_db, LQ==2)
-coal_a1 = db.locate(coal_a1,6,"z")
-gaus_a1 = model.create("Gaussian", range=10, sill=9000000)
 
+sim_a1 <- function(indb){
+  
+  db.locate(indb, "Accumulation", "z")
+  coal_a1 = db.sel(indb, LQ==2)
+  coal_a1 = db.locate(coal_a1,6,"z")
+  gaus_a1 = model.create("Gaussian", range=10, sill=9000000)
+  outdb = db.create(x0=c(0,0),dx=c(1,1),nx=c(200,100))
+  neighb = neigh.create(ndim = 2, type = 0)
+  sim_a1 =  simtub(dbin = coal_a1,dbout=outdb,model=gaus_a1,neigh = neighb,mean=15000)
+  return(sim_a1)
 
-sim_a1 =  simtub(dbin = coal_a1,dbout=outdb,model=gaus_a1,neigh = neighb,mean=15000)
+}
 
-plot(sim_a1,pos.legend=2)
-plot(coal_a1,add=T)
+sima1 = sim_a1(coal_db)
+
+plot(sima1,pos.legend=2)
+plot(db.locate(coal_db, "Accumulation", "z"),add=T)
 ```
 ***QUESTION***: 
 
-Do we need to select then simulate? I think we need to SELECT then simulate after. 
 
-Few possibilities:
-
--There is a way to use two different distributions based on the value of another variable (so one gaussian for A0, different for A1) that I am missing within the simulation code (Would this be )
-(Check the simtub source code)
-
--There is a built in way to draw data from two different databases dictated by a third
-
--There is not a built in way and I will have to do this myself. 
-
-
-Create new selection
-
-
-Trying to use http://rgeostats.free.fr/html/db.selgrid.html to transfer the selection from one grid to the other. 
-
-May have to work backwards and add a grid to the original DB? I don't know! Look at some more examples.
 
 ```{r}
-sim_lq0_sel = db.sel(sim_lq, SimPGS.LQ.SFac1==1)
-sim_lq1_sel = db.sel(sim_lq, SimPGS.LQ.SFac1==2)
+sim_lq0_sel = db.sel(simlq, SimPGS.LQ.SFac1==1)
+sim_lq1_sel = db.sel(simlq, SimPGS.LQ.SFac1==2)
 
 ```
 
@@ -229,7 +240,7 @@ plot(blockstat(cgrid, cxdb, fun='mean'))
 panel_q =blockstat(cgrid, cxdb, fun='mean')
 ```
 ```{r}
-selectivity(panel_q, cuts = seq(1000,2500,50))
+sel = selectivity(panel_q, cuts = seq(1000,2500,50))
 ```
 
 ```{r}
