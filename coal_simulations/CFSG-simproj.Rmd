@@ -150,7 +150,7 @@ sim_a0 <- function(indb, nsim=1){
   gaus_a0 = model.create("Gaussian", range=10, sill=250000)
   outdb = db.create(x0=c(0,0),dx=c(1,1),nx=c(200,100))
   neighb = neigh.create(ndim = 2, type = 0)
-  sim =  simtub(dbin = coal_a0,dbout=outdb,model=gaus_a0,neigh = neighb,mean=5000)
+  sim =  simtub(dbin = coal_a0,dbout=outdb,model=gaus_a0,neigh = neighb,mean=5000, nbsimu = nsim)
   return(sim)
   
 }
@@ -166,7 +166,7 @@ plot(db.locate(coal_db, "Accumulation", "z"), add = T)
 ```
 ```{r}
 
-sim_a1 <- function(indb){
+sim_a1 <- function(indb, nsim=1){
   
   db.locate(indb, "Accumulation", "z")
   coal_a1 = db.sel(indb, LQ==2)
@@ -174,7 +174,7 @@ sim_a1 <- function(indb){
   gaus_a1 = model.create("Gaussian", range=10, sill=9000000)
   outdb = db.create(x0=c(0,0),dx=c(1,1),nx=c(200,100))
   neighb = neigh.create(ndim = 2, type = 0)
-  sim_a1 =  simtub(dbin = coal_a1,dbout=outdb,model=gaus_a1,neigh = neighb,mean=15000)
+  sim_a1 =  simtub(dbin = coal_a1,dbout=outdb,model=gaus_a1,neigh = neighb,mean=15000, nbsimu = nsim)
   return(sim_a1)
 
 }
@@ -285,6 +285,8 @@ min(simu@items$Simu.Thickness.S1)
 ```{r}
 sthicks = sim_thickness(coal_db, nsim = 100)
 slqs = sim_lq(coal_db, nsim = 100)
+sima0 = sim_a0(coal_db, nsim = 100)
+sima1 = sim_a1(coal_db, nsim = 100)
 ```
 ```{r}
 #for (x in slqs@items){
