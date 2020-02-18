@@ -108,9 +108,7 @@ coal_db
 plot(sim_lq)
 plot(coal_db, add = T)
 ```
-```{r}
-plot(blockstat(cgrid, sim2, fun='mean'))
-```
+
 
 
 
@@ -207,7 +205,7 @@ Made the map, now to put it back into R
 
 ```{r}
 apwdb = db.create(pw_map,x0=c(0,0),dx=c(1,1),nx=c(200,100))
-plot(db.locate(apwdb, 4, "z"))
+plot(db.locate(apwdb, 4, "z"), pos.legend = 3)
 ```
 
 # 7. Calorific value
@@ -231,7 +229,7 @@ plot(blockstat(cgrid, cxdb, fun='mean'))
 panel_q =blockstat(cgrid, cxdb, fun='mean')
 ```
 ```{r}
-selectivity(panel_q)
+selectivity(panel_q, cuts = seq(1000,2500,50))
 ```
 
 ```{r}
