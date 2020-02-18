@@ -4,10 +4,14 @@ output: html_notebook
 editor_options: 
   chunk_output_type: inline
 ---
+```{r}
+options(warn = -1)
+```
 
 
 
 ```{r}
+
 rm(list=ls())
 
 coal_df = read.csv(file = 'dataset_Nicholas-Tony.csv')
@@ -278,7 +282,7 @@ sel = selectivity(panel_q, cuts = seq(1000,2500,50))
 ```
 
 ```{r}
-min(simu@items$Simu.Thickness.S1)
+selectivity.curve(sel,"z","Q")
 ```
 # 100 iterations 
 
@@ -288,7 +292,7 @@ slqs = sim_lq(coal_db, nsim = 100)
 sima0 = sim_a0(coal_db, nsim = 100)
 sima1 = sim_a1(coal_db, nsim = 100)
 ```
-```{r}
+```{r warning=FALSE}
 #for (x in slqs@items){
 #  print(mean(x))
 #}
@@ -311,46 +315,15 @@ for (idx in 4:103){
   cgrid = db.create(x0=c(0,0),dx=c(10,10),nx=c(20,10))
   panel_q = blockstat(cgrid, cxdb, fun='mean')
   
-  print(db.stat(panel_q, fun="mean"))
+  sel = selectivity(panel_q, cuts = seq(1000,2500,50),flag.plot = F)
+  
+  if (idx == 4){
+    selectivity.curve(sel,"z","Q")
+  } else {
+    selectivity.curve(sel,"z","Q", add=T)
+  }
 
 }
-
-```
-
-
-```{r}
-
-simt = sim_thickness(coal_db)
-
-for (x in 1:100){
-
-  #Each iteration, need to:
-  #  Conditionally simulate thickness
-  simt = sim_thickness(coal_db)
-  #  Conditionally simulate lignite quality index
-  simlq = sim_lq(coal_db)
-  #  Conditionally simulate accumulations A0 and A1
-  sima0 = sim_a0(coal_db)
-  sima1 = sim_a1(coal_db)
-  #  Stitch together the conditional simulations
-  simulated_a0 = sima0@items$Simu.Accumulation.S1
-  simulated_a1 = sima1@items$Simu.Accumulation.S1
-  mask = simlq@items$SimPGS.LQ.SFac1
-  jsim = join_sims_zonal(simulated_a0,simulated_a1,mask)
-  
-  cx = jsim / simt@items$Simu.Thickness.S1
-  
-  cxdb = db.create(cx,x0=c(0,0),dx=c(1,1),nx=c(200,100))
-  cxdb = db.locate(cxdb, "cx", "z")
-  
-  cgrid = db.create(x0=c(0,0),dx=c(10,10),nx=c(20,10))
-  
-  panel_q = blockstat(cgrid, cxdb, fun='mean')
-  
-  print(db.stat(panel_q, fun="mean"))
-
-}
-
 
 ```
 
