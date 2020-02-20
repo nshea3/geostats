@@ -377,6 +377,15 @@ for (idx in 4:103){
 }
 
 
+
+Mmatrix = sels[[4]][,5]
+Tmatrix = sels[[4]][,2]
+
+for (idx in 5:103){
+  Mmatrix = cbind(Mmatrix, sels[[idx]][,5])
+  Tmatrix = cbind(Tmatrix, sels[[idx]][,2])
+}
+
 ```
 
 
@@ -387,21 +396,25 @@ Variance increaes with increasing grade?
 Comment about variability matching the original distributions. (key feature of imulation)
 
 ```{r}
-mmu = Ms / mlen
 
+mmu = rowMeans(Mmatrix, na.rm = T, dims = 1)
 plot(z, mmu, type = 'l')
 
-mvar = (Mssq / 100.0) - (Ms / 100.0)**2
+mvar = apply(Mmatrix, 1, var, na.rm = T)
 msd = sqrt(mvar)
 
 lines(z, mmu + 1.96*msd, col="red")
 lines(z, mmu - 1.96*msd, col="red")
 ```
 ```{r}
-Tm = T_ / 100.0
+Tm = rowMeans(Tmatrix, na.rm = T, dims = 1)
 plot(z, Tm, type = 'l')
 
 Tvar = (Tsq / 100.0) - (Tm)**2
+Tsd = sqrt(Tvar)
+
+
+Tvar = apply(Tmatrix, 1, var, na.rm = T)
 Tsd = sqrt(Tvar)
 
 lines(z, Tm + 1.96*Tsd, col="red")
@@ -419,5 +432,9 @@ Mmatrix = sels[[4]][,5]
 for (idx in 5:103){
   Mmatrix = cbind(Mmatrix, sels[[idx]][,5])
 }
+```
+
+```{r}
+
 ```
 
