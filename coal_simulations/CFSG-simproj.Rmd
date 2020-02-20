@@ -4,11 +4,8 @@ output: html_notebook
 editor_options: 
   chunk_output_type: inline
 ---
-```{r}
-options(warn = -1)
-```
 
-
+# 1. Loading Data
 
 ```{r}
 
@@ -16,35 +13,57 @@ rm(list=ls())
 
 coal_df = read.csv(file = 'dataset_Nicholas-Tony.csv')
 
-
-coal_df$LQ = coal_df$LQ + 1
-
-coal_df
 ```
-```{r}
-plot(coal_df$x, coal_df$y, cex = coal_df$Thickness/10.0)
-```
+# 2. Mean and Variance of each variable
+
 ```{r}
 print(mean(coal_df$Thickness))
 print(var(coal_df$Thickness))
 ```
+
 ```{r}
 print(mean(coal_df$Accumulation))
 print(var(coal_df$Accumulation))
 ```
 
+```{r}
+print(mean(coal_df$LQ))
+print(var(coal_df$LQ))
+```
 
+Only 29% of the observations have quality index 1. 79% have quality index 0. 
+
+
+# 3. Histograms of each variable
 
 ```{r}
-hist(coal_df$Thickness)
+hist(coal_df$Thickness, breaks = 10)
 ```
+The curve is bell-shaped with a single mode around the average at 10. Negative skew. Median is 10.38, slightly higher than mean. 
+
+Testing given model
+
+```{r}
+ks.test(coal_df$Thickness, pnorm, 10, 2)
+```
+
+
 ```{r}
 hist(coal_df$Accumulation)
 ```
 
+
+
+# 4. Conditional simulation of thickness T on discretization grid
+
 ```{r}
 library(RGeostats)
 
+#Changing the quality index to avoid issue with 0 value
+
+if (any(coal_df$LQ == 0)){
+  coal_df$LQ = coal_df$LQ + 1
+}
 
 
 coal_db <- db.create(coal_df)
@@ -52,21 +71,14 @@ coal_db <- db.create(coal_df)
 coal_db = db.locate(coal_db,3:4,"x")
 coal_db = db.locate(coal_db,5,"z")
 
-coal_db
-plot(coal_db)
 ```
 
-# 4. Conditional simulation of thickness T on the discretization grid
 
-http://rgeostats.free.fr/html/simpgs.html
-
-```{r}
-
-#sim_thickness <- function(){
-#}
+```{r warning=FALSE}
 
 
 sim_thickness <- function(indb, nsim = 1){
+  
   indb = db.locate(indb, "Thickness", "z")
   
   Tmodel=model.create(vartype="Gaussian",range=20,sill=4,ndim=2)
@@ -82,12 +94,7 @@ simu = sim_thickness(coal_db)
 plot(simu)
 plot(coal_db, add=T)
 ```
-```{r}
-hist(simu@items$Simu.Thickness.S1)
-cgrid = db.create(x0=c(0,0),dx=c(10,10),nx=c(20,10))
-#simu
-plot(blockstat(cgrid, simu, fun='mean'))
-```
+
 
 # 5. Conditional simulation of LQ (lignite quality index)
 
@@ -96,7 +103,7 @@ Underlying GRF is standard ($\mu = 0$ and $\sigma^{2} = 1$) and Gaussian covaria
 
 First, update the 
 
-```{r}
+```{r warning=FALSE}
 
 props = table(coal_db[,"LQ"]) / coal_db$nsamples
 props = c(0.5,0.5)
@@ -104,7 +111,7 @@ rule = rule.create(c("S", "F1", "F2"))
 plot(rule, props=props, col=c("blue","yellow"), title="Lithotype Rule")
 ```
 
-```{r}
+```{r warning=FALSE}
 
 
 sim_lq <- function(indb, nsim = 1){
@@ -125,11 +132,6 @@ simlq = sim_lq(coal_db)
 plot(simlq)
 plot(db.locate(coal_db, "LQ", "z"), add = T)
 ```
-```{r}
-hist(simlq@items$SimPGS.LQ.SFac1)
-```
-
-
 
 
 # 6. Conditional simulation of the accumulation A 
@@ -142,14 +144,13 @@ Where $LQ(x) = 1$, $\mu = 15000$ and $\sigma^{2} = 9\times10^6$.
 
 Both have Gaussian covariance with range 10. 
 
-***QUESTION:*** where to set the variance? we set the mean in the simtub function. 
-Does this go in the "sill" argument?
-
-```{r}
+```{r warning=FALSE}
 
 sim_a0 <- function(indb, nsim=1){
   
   indb = db.locate(indb, "Accumulation", "z")
+  
+  #Selecting the data for condition
   coal_a0 = db.sel(indb, LQ==1)
   gaus_a0 = model.create("Gaussian", range=10, sill=250000)
   outdb = db.create(x0=c(0,0),dx=c(1,1),nx=c(200,100))
@@ -160,15 +161,12 @@ sim_a0 <- function(indb, nsim=1){
 }
 
 
-#Tmodel=model.create(vartype="Gaussian",range=20,ndim=2)
-
 sima0 = sim_a0(coal_db)
-
 
 plot(sima0, pos.legend=0)
 plot(db.locate(coal_db, "Accumulation", "z"), add = T)
 ```
-```{r}
+```{r warning=FALSE}
 
 sim_a1 <- function(indb, nsim=1){
   
@@ -185,42 +183,20 @@ sim_a1 <- function(indb, nsim=1){
 
 sima1 = sim_a1(coal_db)
 
-plot(sima1,pos.legend=2)
+plot(sima1)
 plot(db.locate(coal_db, "Accumulation", "z"),add=T)
 ```
-***QUESTION***: 
-
 
 
 ```{r}
-
-
-```
-
-```{r}
-
-#Create masks/selections for the A_0 region and A_1 region
-#sim_lq0_sel = db.sel(simlq, SimPGS.LQ.SFac1==1)
-#sim_lq1_sel = db.sel(simlq, SimPGS.LQ.SFac1==2)
-#
-#cpdb = db.grid.copy(sim_lq, sim_a0, names =db.getname(sim_lq,"z",1))
-#
-#cpdb = db.sel(cpdb, Copy.SimPGS.LQ.SFac1==1)
-#
-#cpdb = db.locate(cpdb, 4, "z")
-
-plot(cpdb)
-```
-```{r}
-plot(sim_a0)
 
 #Pull out vectors of simulated 
-simulated_a0 = sim_a0@items$Simu.Accumulation.S1
-simulated_a1 = sim_a1@items$Simu.Accumulation.S1
+simulated_a0 = sima0@items$Simu.Accumulation.S1
+simulated_a1 = sima1@items$Simu.Accumulation.S1
 
 #Retrieve the simulated LQ index
 #Turn into binary selector/mask
-mask_1 = sim_lq@items$SimPGS.LQ.SFac1 - 1
+mask_1 = simlq@items$SimPGS.LQ.SFac1 - 1
 #Reverse
 mask_0 = 1 - mask_1
 
@@ -228,11 +204,7 @@ mask_0 = 1 - mask_1
 all(mask_0 + mask_1 == 1)
 
 pw_map = mask_0 * simulated_a0 + mask_1 * simulated_a1
-```
 
-Made the map, now to put it back into R
-
-```{r}
 
 join_sims_zonal <- function(sim0, sim1, zones){
   
@@ -260,47 +232,61 @@ Compute and plot the calorific value $C(x) = \frac{A(x)}{T(x)}$.
 
 ```{r}
 
-
-
-
-cx = apwdb@items$pw_map/simu@items$Simu.Thickness.S1
+cx = pw_map/simu@items$Simu.Thickness.S1
 
 cxdb = db.create(cx,x0=c(0,0),dx=c(1,1),nx=c(200,100))
 cxdb = db.locate(cxdb, 4, "z")
 plot(cxdb)
 
 ```
-```{r}
+
+# 8. Value of $C_{v}$ on each panel
+
+Value of $C_{v}$ on each panel averaging over the 100 contained values. 
+
+```{r warning=FALSE}
 cgrid = db.create(x0=c(0,0),dx=c(10,10),nx=c(20,10))
-#simu
+
 plot(blockstat(cgrid, cxdb, fun='mean'))
 
 panel_q =blockstat(cgrid, cxdb, fun='mean')
 ```
+
+# 9. Quality tonnage and mean quality above cutoff curves
+
+Quality tonnage and mean quality above cutoff for cut-off varying from 1000 to 2500. 
+
 ```{r}
-sel = selectivity(panel_q, cuts = seq(1000,2500,50))
+hist(panel_q@items$Stats.mean)
+```
+
+## The 
+
+```{r}
+sel = selectivity(panel_q, cuts = seq(1000,2500,50), flag.plot = F)
+selectivity.curve(sel,"T","m")
 ```
 
 ```{r}
-selectivity.curve(sel,"z","Q")
+selectivity.curve(sel,"z","m")
 ```
-# 100 iterations 
 
-```{r}
+
+
+# 10. Simulations of Calorific Value
+
+100 simulations
+
+```{r warning=FALSE}
 sthicks = sim_thickness(coal_db, nsim = 100)
 slqs = sim_lq(coal_db, nsim = 100)
 sima0 = sim_a0(coal_db, nsim = 100)
 sima1 = sim_a1(coal_db, nsim = 100)
 ```
+
+Calculating statistics on individual simulations
+
 ```{r warning=FALSE}
-#for (x in slqs@items){
-#  print(mean(x))
-#}
-
-
-#The runs are stored in a list, starting at number 4 and going on for each of the simulations
-#Need to 
-
 for (idx in 4:103){
   thickn = sthicks@items[[idx]]
   simlq = slqs@items[[idx]]
@@ -319,6 +305,7 @@ for (idx in 4:103){
   
   
   if (idx == 4){
+    T_ = sel[,2]
     z = sel[,1]
     Qs = sel[,3]
     Qssq = sel[,3]**2
@@ -334,16 +321,21 @@ for (idx in 4:103){
 
 
 ```
+
+
+# 11. Empirical 95% Confidence Interval curves
+
 ```{r}
 mu = Qs / 100.0
 
-plot(z, mu, type = 'l')
+plot(T_, mu, type = 'l')
 
 var = (Qssq / 100.0) - (Qs / 100.0)**2
 sd = sqrt(var)
 
-lines(z, mu + 1.96*sd, col="red")
-lines(z, mu - 1.96*sd, col="red")
+lines(T_, mu + 1.96*sd, col="red")
+lines(T_, mu - 1.96*sd, col="red")
+lines(T_,mu)
 ```
 
 ```{r}
@@ -356,5 +348,8 @@ msd = sqrt(mvar)
 
 lines(z, mmu + 1.96*msd, col="red")
 lines(z, mmu - 1.96*msd, col="red")
+```
+```{r}
+selectivity.curve()
 ```
 
