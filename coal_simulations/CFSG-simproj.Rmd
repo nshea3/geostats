@@ -347,32 +347,14 @@ for (idx in 4:103){
   
   sel = selectivity(panel_q, cuts = seq(1000,2500,50),flag.plot = F)
   
-  
-  
   if (idx == 4){
     
     sels = vector("list", 103)
     sels[[idx]] = sel
-    T_ = sel[,2]
-    Tsq = sel[,2]**2
-    z = sel[,1]
-    Qs = sel[,3]
-    Qssq = sel[,3]**2
-    Ms = sel[,5]
-    Mssq = sel[,5]**2
-    selectivity.curve(sel,"Z","T")
-    mlen = c(sum(!is.na(sel[,5])))
     
   } else {
     sels[[idx]] = sel
-    T_ = sel[,2] + T_
-    Tsq = sel[,2]**2 + Tsq
-    Qs = sel[,3] + Qs
-    Qssq = sel[,3]**2 + Qssq
-    Ms = rowSums(cbind(sel[,5], Ms), na.rm = T)
-    Mssq = sel[,5]**2 + Mssq
-    selectivity.curve(sel,"Z","T", add = T)
-    mlen = c(mlen, sum(!is.na(sel[,5])))
+
   }
 }
 
@@ -426,15 +408,4 @@ Decreases with increasing
 Drawing from two distributions to drawing from one
 Smaller set of blocks 
 Outweighs the larger variance of the higher grade blocks
-```{r}
-Mmatrix = sels[[4]][,5]
-
-for (idx in 5:103){
-  Mmatrix = cbind(Mmatrix, sels[[idx]][,5])
-}
-```
-
-```{r}
-
-```
 
