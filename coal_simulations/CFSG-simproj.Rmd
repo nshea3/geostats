@@ -7,6 +7,8 @@ editor_options:
 
 # 1. Loading Data
 
+### Data loaded into dataframe
+
 ```{r}
 
 rm(list=ls())
@@ -16,22 +18,34 @@ coal_df = read.csv(file = 'dataset_Nicholas-Tony.csv')
 ```
 # 2. Mean and Variance of each variable
 
-```{r}
-print(mean(coal_df$Thickness))
-print(var(coal_df$Thickness))
-```
+
+### Thickness
 
 ```{r}
-print(mean(coal_df$Accumulation))
-print(var(coal_df$Accumulation))
+cat("Mean thickness: ", mean(coal_df$Thickness))
+cat("\nVariance of thickness: ", var(coal_df$Thickness))
 ```
 
+
+### Accumulation
+
 ```{r}
-print(mean(coal_df$LQ))
-print(var(coal_df$LQ))
+cat("Mean accumulation: ", mean(coal_df$Accumulation))
+cat("\nVariance of accumulation: ", var(coal_df$Accumulation))
+```
+
+Very large variance, guaranteed negative values for accumulation if we are in the Gaussian case (infinite extent?) 
+Since accumulation is a physical (nonnegative) quantity, we cannot have these distributions. Consistent with the given multimodal sum-of-Gaussians.
+
+### Lignite Quality Index
+
+```{r}
+cat("Mean lignite quality: ", mean(coal_df$LQ))
+cat("\nVariance of lignite quality: ", var(coal_df$LQ))
 ```
 
 Only 29% of the observations have quality index 1. 79% have quality index 0. 
+Variance matches Bernoulli RV with $p = 0.29$, $p(1-p) = 0.2059$.
 
 
 # 3. Histograms of each variable
@@ -41,7 +55,9 @@ hist(coal_df$Thickness, breaks = 10)
 ```
 The curve is bell-shaped with a single mode around the average at 10. Negative skew. Median is 10.38, slightly higher than mean. 
 
-Testing given model
+Given model for Thickness is $\mu = 10$, $\sigma^2 = 4$.
+
+Testing validity of given model with 1-sample Kolmogorov-Smirnov test:
 
 ```{r}
 ks.test(coal_df$Thickness, pnorm, 10, 2)
@@ -49,12 +65,26 @@ ks.test(coal_df$Thickness, pnorm, 10, 2)
 
 
 ```{r}
-hist(coal_df$Accumulation)
+hist(coal_df$Accumulation, breaks=10)
+```
+
+Looks bimodal, one centered at low values with low variance.
+Another with high mean with high dispersion. 
+
+ANOVA?
+t-Test?
+
+
+```{r}
+
 ```
 
 
 
 # 4. Conditional simulation of thickness T on discretization grid
+
+
+Preparing the RGeostats db object
 
 ```{r}
 library(RGeostats)
@@ -73,6 +103,9 @@ coal_db = db.locate(coal_db,5,"z")
 
 ```
 
+
+Simulating the thickness
+Modeled as a Gaussian random function with parameters $\mu = 10$, $\sigma^2 = 4$.
 
 ```{r warning=FALSE}
 
@@ -260,12 +293,24 @@ Quality tonnage and mean quality above cutoff for cut-off varying from 1000 to 2
 hist(panel_q@items$Stats.mean)
 ```
 
+Replicates the two modes, dispersion of the distribution. 
+
+
 ## The 
 
 ```{r}
 sel = selectivity(panel_q, cuts = seq(1000,2500,50), flag.plot = F)
-selectivity.curve(sel,"T","m")
+
+selectivity.curve(sel,"Z","T")
 ```
+
+Interpreted in terms of the distribution, 
+Obviously one iteration so it's not very 
+
+
+
+
+
 
 ```{r}
 selectivity.curve(sel,"z","m")
@@ -306,16 +351,22 @@ for (idx in 4:103){
   
   if (idx == 4){
     T_ = sel[,2]
+    Tsq = sel[,2]**2
     z = sel[,1]
     Qs = sel[,3]
     Qssq = sel[,3]**2
     Ms = sel[,5]
     Mssq = sel[,5]**2
+    selectivity.curve(sel,"Z","T")
+    
   } else {
+    T_ = sel[,2] + T_
+    Tsq = sel[,2]**2 + Tsq
     Qs = sel[,3] + Qs
     Qssq = sel[,3]**2 + Qssq
     Ms = sel[,5] + Ms
     Mssq = sel[,5]**2 + Mssq
+    selectivity.curve(sel,"Z","T", add = T)
   }
 }
 
@@ -325,18 +376,9 @@ for (idx in 4:103){
 
 # 11. Empirical 95% Confidence Interval curves
 
-```{r}
-mu = Qs / 100.0
 
-plot(T_, mu, type = 'l')
-
-var = (Qssq / 100.0) - (Qs / 100.0)**2
-sd = sqrt(var)
-
-lines(T_, mu + 1.96*sd, col="red")
-lines(T_, mu - 1.96*sd, col="red")
-lines(T_,mu)
-```
+Variance increaes with increasing grade?
+Comment about variability matching the original distributions. (key feature of imulation)
 
 ```{r}
 mmu = Ms / 100.0
@@ -350,6 +392,19 @@ lines(z, mmu + 1.96*msd, col="red")
 lines(z, mmu - 1.96*msd, col="red")
 ```
 ```{r}
-selectivity.curve()
+Tm = T_ / 100.0
+plot(z, Tm, type = 'l')
+
+Tvar = (Tsq / 100.0) - (Tm)**2
+Tsd = sqrt(Tvar)
+
+lines(z, Tm + 1.96*Tsd, col="red")
+lines(z, Tm - 1.96*Tsd, col="red")
 ```
+
+
+Decreases with increasing 
+Drawing from two distributions to drawing from one
+Smaller set of blocks 
+Outweighs the larger variance of the higher grade blocks
 
