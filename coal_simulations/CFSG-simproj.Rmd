@@ -349,6 +349,8 @@ for (idx in 4:103){
   
   if (idx == 4){
     
+    z = sel[,1]
+    
     sels = vector("list", 103)
     sels[[idx]] = sel
     
@@ -392,8 +394,6 @@ lines(z, mmu - 1.96*msd, col="red")
 Tm = rowMeans(Tmatrix, na.rm = T, dims = 1)
 plot(z, Tm, type = 'l')
 
-Tvar = (Tsq / 100.0) - (Tm)**2
-Tsd = sqrt(Tvar)
 
 
 Tvar = apply(Tmatrix, 1, var, na.rm = T)
