@@ -35,7 +35,7 @@ cat("\nVariance of accumulation: ", var(coal_df$Accumulation))
 ```
 
 Accumulation has a very large variance. In the Gaussian case, this would result in many negative values for accumulation. Since accumulation is a physical nonnegative quantity, it cannot be distributed in this way. 
-However, the large variance is consistent with the given model, a multimodal sum of Gaussians distribution.
+The large variance is consistent with the given model, with a multimodal distribution (sum of Gaussians).
 
 ### Lignite Quality Index
 
@@ -70,7 +70,7 @@ hist(coal_df$Accumulation, breaks=10)
 
 The accumulation is bimodal, one mode centered at low values with low variance, and the other with a high mean and high dispersion.
 
-Plotting densities separately for lignite quality classes shows how lignite quality is associated with the accumulation.
+Plotting densities separately for lignite quality classes shows how lignite quality is strongly associated with  accumulation.
 
 (Lignite quality = 1 in blue, lignite quality = 0 in black)
 
@@ -79,8 +79,8 @@ plot(density(coal_df[coal_df$LQ == 0,]$Accumulation), xlim = c(0,25000), main="D
 lines(density(coal_df[coal_df$LQ == 1,]$Accumulation), col='blue')
 
 ```
-Lignite quality 1 is a distribution centered near 15000 with high variance.
-Lignite quality 0 is a distribution centered near 5000 with low variance. 
+Lignite quality 1 has a distribution centered near 15000 with high variance.
+Lignite quality 0 has a distribution centered near 5000 with low variance. 
 
 ```{r}
 hist(coal_df$LQ)
@@ -172,7 +172,6 @@ Where $LQ(x) = 1$, $\mu = 15000$ and $\sigma^{2} = 9\times10^6$.
 
 Both $A_0$ and $A_1$ have Gaussian covariance with range 10. 
 
-
 $A_0$ and $A_1$ are simulated separately over the whole domain, conditioned *only* on the data with $LQ(x) = 0$ and $LQ(x) = 1$ respectively. Then the two simulations are joined together by creating a mask for the regions with $LQ(x) = 0$ and those with $LQ(x) = 1$ and assigning the appropriate simulated values in that region. 
 
 ```{r warning=FALSE}
@@ -242,7 +241,7 @@ plot(db.locate(db.create(jsim,x0=c(0,0),dx=c(1,1),nx=c(200,100)),"jsim","z"), xl
 
 ```
 
-The map of simulated Accumulation shows the spatial behavior of the bimodal distribution, with the high valued  
+The map of simulated Accumulation shows the spatial distribution of the lignite qualities and accumulations, with the regions of high Accumulation corresponding to the areas with lignite quality 1, and the regions of low accumulation corresponding to the areas with lignite quality 0.
 
 # 7. Calorific value
 
@@ -257,7 +256,7 @@ cxdb = db.locate(cxdb, 4, "z")
 plot(cxdb, xlab="X", ylab="Y", title="Calorific Value (Simulated)",pos.legend=1)
 
 ```
-Undefined mean and variance? Piecewise Cauchy distribution? 
+The calorific value is determined as $C(x) = \frac{A(x)}{T(x)}$. In a given region of the map with a single lignite quality value, the calorific value definition simplifies to $C(x) = \frac{A_{1}(x)}{T(x)}$ (if LQ=1) or  $C(x) = \frac{A_{0}(x)}{T(x)}$ (if LQ = 0). In both cases, the calorific value is the ratio of two Gaussian distributions, so the values will be distributed according to a ratio distribution. The spatial distribution of calorific values has intermediate range between thickness and, while there are short-range fluctuatoins. The pocket of high values corresponds to a minima of the thickness simulation. 
 
 # 8. Value of $C_{v}$ on each panel
 
@@ -271,7 +270,7 @@ panel_q =blockstat(cgrid, cxdb, fun='mean')
 plot(panel_q, xlab = "X", ylab = "Y", title = "Calorific Value of Panels (Simulated)",pos.legend=1)
 ```
 The mean operation has smoothed the extreme values in the distribution.
-Max panel grade is far lower than max grade at 1x1 scale, and min is higher than max grade at 1x1 scale. E
+Max panel grade is far lower than max grade at 1x1 scale, and min is higher than max grade at 1x1 scale. 
 
 # 9. Quality tonnage and mean quality above cutoff curves
 
@@ -281,12 +280,10 @@ Quality tonnage and mean quality above cutoff for cut-off varying from 1000 to 2
 hist(panel_q@items$Stats.mean, main = paste("Histogram, Calorific Value of Panels"), xlab = "Calorific value of Panels (Simulated)")
 ```
 
-Replicates the two modes, dispersion of the distribution. 
-
 
 ## The 
 
-```{r}
+```{r }
 sel = selectivity(panel_q, cuts = seq(1000,2500,50), flag.plot = F)
 
 plot(sel[,1], sel[,2], type='l')
