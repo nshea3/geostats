@@ -76,6 +76,8 @@ t-Test?
 
 
 ```{r}
+coal_df$Accumulation
+
 
 ```
 
@@ -135,14 +137,6 @@ Modelled as a thresholded GRF with constant proportion 0.5.
 Underlying GRF is standard ($\mu = 0$ and $\sigma^{2} = 1$) and Gaussian covariance with range 50. 
 
 First, update the 
-
-```{r warning=FALSE}
-
-props = table(coal_db[,"LQ"]) / coal_db$nsamples
-props = c(0.5,0.5)
-rule = rule.create(c("S", "F1", "F2"))
-plot(rule, props=props, col=c("blue","yellow"), title="Lithotype Rule")
-```
 
 ```{r warning=FALSE}
 
@@ -302,6 +296,8 @@ Replicates the two modes, dispersion of the distribution.
 sel = selectivity(panel_q, cuts = seq(1000,2500,50), flag.plot = F)
 
 selectivity.curve(sel,"Z","T")
+
+plot(sel[,1], sel[,2], type='l')
 ```
 
 Interpreted in terms of the distribution, 
@@ -309,11 +305,8 @@ Obviously one iteration so it's not very
 
 
 
-
-
-
 ```{r}
-selectivity.curve(sel,"z","m")
+plot(sel[,1],sel[,5],type = 'l')
 ```
 
 
@@ -333,12 +326,15 @@ Calculating statistics on individual simulations
 
 ```{r warning=FALSE}
 for (idx in 4:103){
+  
   thickn = sthicks@items[[idx]]
   simlq = slqs@items[[idx]]
   simulated_a0 = sima0@items[[idx]]
   simulated_a1 = sima1@items[[idx]]
   ajsim = join_sims_zonal(simulated_a0,simulated_a1,simlq)
+  
   cx = ajsim/thickn
+  
   cxdb = db.create(cx,x0=c(0,0),dx=c(1,1),nx=c(200,100))
   cxdb = db.locate(cxdb, 4, "z")
   
@@ -376,9 +372,6 @@ for (idx in 5:103){
 # 11. Empirical 95% Confidence Interval curves
 
 
-Variance increaes with increasing grade?
-Comment about variability matching the original distributions. (key feature of imulation)
-
 ```{r}
 
 mmu = rowMeans(Mmatrix, na.rm = T, dims = 1)
@@ -390,6 +383,9 @@ msd = sqrt(mvar)
 lines(z, mmu + 1.96*msd, col="red")
 lines(z, mmu - 1.96*msd, col="red")
 ```
+The standard 95% CI steady until cutoff $z$ near 2000, when the distribution of curves begins to widen. Blocks over 2000 are a rare event, many simulations will not produce any blocks of this value or higher. Destroyed by averaging. The In fact, the high calorific value blocks occur more in simulations where the high accumulation occurs with the low thickness. 
+
+
 ```{r}
 Tm = rowMeans(Tmatrix, na.rm = T, dims = 1)
 plot(z, Tm, type = 'l')
@@ -403,9 +399,7 @@ lines(z, Tm + 1.96*Tsd, col="red")
 lines(z, Tm - 1.96*Tsd, col="red")
 ```
 
-
-Decreases with increasing 
-Drawing from two distributions to drawing from one
-Smaller set of blocks 
-Outweighs the larger variance of the higher grade blocks
-
+The tonnage cutoff (quality tonnage) curve decreases with increasing cutoff. High grade blocks. 
+The curve transitions slightly between cutoff 1500 and cutoff 2000 where we pass from the area of the distribution dominated by A0 to the area dominated by A1. Drawing from two distributions to drawing from one
+As seen in the mean quality above cutoff curve, not many simulations producing blocks in this range. Many simulations will simply have zero at this, driving down the variance substantially. 
+The effect of drawing from a smaller set of blocks outweighs the larger variance of the higher grade blocks.
