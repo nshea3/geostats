@@ -276,28 +276,21 @@ Max panel grade is far lower than max grade at 1x1 scale, and min is higher than
 
 Quality tonnage and mean quality above cutoff for cut-off varying from 1000 to 2500. 
 
-```{r}
-hist(panel_q@items$Stats.mean, main = paste("Histogram, Calorific Value of Panels"), xlab = "Calorific value of Panels (Simulated)")
-```
+Tonnage given by $t(c)=t \sum_{i=1}^{N} 1_{v}\left(C_{v}\left(x_{i}\right)>c\right)$. Tonnage is normalized, so the returned value must be multiplied by $200 \times 10^{6}$ to find the correct value. 
 
-
-## The 
-
-```{r }
+```{r warning=FALSE}
 sel = selectivity(panel_q, cuts = seq(1000,2500,50), flag.plot = F)
 
-plot(sel[,1], sel[,2], type='l')
+plot(sel[,1], 200*(10**6)*sel[,2], type='l', main="Tonnage vs Cutoff", xlab = "Cutoff (CV)", ylab="Tonnage")
 ```
 
-Interpreted in terms of the distribution, 
-Obviously one iteration so it's not very 
-
+Interpreted in terms of the distribution, we can clearly see the change in slope as the low-valued, low-variance distribution gives way to the high-valued, high-dispersion distribution. This corresponds to the shallow slope above CV 1750 or so as the blocks transition from $A_0$ to $A_1$. 
 
 
 ```{r}
 plot(sel[,1],sel[,5],type = 'l')
 ```
-
+Here, we can also see a transition from a smooth area to a stepwise curve at high cutoff values. The very few remaining blocks cause abrupt changes in the average grade in the as they are excluded at successively higher cutoffs.
 
 
 # 10. Simulations of Calorific Value
@@ -359,13 +352,13 @@ for (idx in 5:103){
 
 ```{r}
 Tm = rowMeans(Tmatrix, na.rm = T, dims = 1)
-plot(z, Tm, type = 'l',main="Tonnage above Cutoff versus Cutoff", xlab="Cutoff", ylab ="Tonnage above Cutoff")
+plot(z, Tm, type = 'l',main="Tonnage above Cutoff versus Cutoff", xlab="Cutoff (CV)", ylab ="Tonnage above Cutoff")
 ```
 
 
 ```{r}
 mmu = rowMeans(Mmatrix, na.rm = T, dims = 1)
-plot(z, mmu, type = 'l', main="Mean Grade above Cutoff versus Cutoff", xlab="Cutoff", ylab ="Mean Grade above Cutoff")
+plot(z, mmu, type = 'l', main="Mean Grade above Cutoff versus Cutoff", xlab="Cutoff (CV)", ylab ="Mean Grade above Cutoff")
 ```
 
 
@@ -377,7 +370,7 @@ plot(z, mmu, type = 'l', main="Mean Grade above Cutoff versus Cutoff", xlab="Cut
 ```{r}
 
 mmu = rowMeans(Mmatrix, na.rm = T, dims = 1)
-plot(z, mmu, type = 'l', main="Mean Grade above Cutoff versus Cutoff", xlab="Cutoff", ylab ="Mean Grade above Cutoff")
+plot(z, mmu, type = 'l', main="Mean Grade above Cutoff versus Cutoff", xlab="Cutoff (CV)", ylab ="Mean Grade above Cutoff")
 
 mvar = apply(Mmatrix, 1, var, na.rm = T)
 msd = sqrt(mvar)
@@ -390,7 +383,7 @@ The standard 95% CI steady until cutoff $z$ near 2000, when the distribution of 
 
 ```{r}
 Tm = rowMeans(Tmatrix, na.rm = T, dims = 1)
-plot(z, Tm, type = 'l',main="Tonnage above Cutoff versus Cutoff", xlab="Cutoff", ylab ="Tonnage above Cutoff")
+plot(z, Tm, type = 'l',main="Tonnage above Cutoff versus Cutoff", xlab="Cutoff (CV)", ylab ="Tonnage above Cutoff")
 
 Tvar = apply(Tmatrix, 1, var, na.rm = T)
 Tsd = sqrt(Tvar)
