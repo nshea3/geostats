@@ -71,13 +71,9 @@ hist(coal_df$Accumulation, breaks=10)
 Looks bimodal, one centered at low values with low variance.
 Another with high mean with high dispersion. 
 
-ANOVA?
-t-Test?
-
-
 ```{r}
-coal_df$Accumulation
 
+coal_df[coal_df$LQ == 1,]
 
 ```
 
@@ -119,7 +115,7 @@ sim_thickness <- function(indb, nsim = 1){
   Tmodel=model.create(vartype="Gaussian",range=20,sill=4,ndim=2)
   outdb = db.create(x0=c(0,0),dx=c(1,1),nx=c(200,100))
   neighb = neigh.create(ndim = 2, type = 0)
-  simu <- simtub(nbtuba = 450, dbin=indb,dbout=outdb,model=Tmodel,neigh = neighb,mean = c(10), nbsimu = nsim)
+  simu <- simtub(nbtuba = 450, dbin=indb,dbout=outdb,model=Tmodel,neigh = neighb,mean = c(10),seed=933033161, nbsimu = nsim)
   return(simu)
 
 }
@@ -149,7 +145,7 @@ sim_lq <- function(indb, nsim = 1){
   voisin = neigh.create(type=0)
   outdb = db.create(x0=c(0,0),dx=c(1,1),nx=c(200,100))
   gaus = model.create("Gaussian", range=50)
-  simlq = simpgs(dbout=outdb, dbin=indb, rule=rule,props=c(0.5, 0.5), model1=gaus, neigh = voisin, nbsimu = nsim)
+  simlq = simpgs(dbout=outdb, dbin=indb, rule=rule,props=c(0.5, 0.5), model1=gaus, neigh = voisin,seed=573738494, nbsimu = nsim)
   return(simlq)
 
 }
@@ -182,7 +178,7 @@ sim_a0 <- function(indb, nsim=1){
   gaus_a0 = model.create("Gaussian", range=10, sill=250000)
   outdb = db.create(x0=c(0,0),dx=c(1,1),nx=c(200,100))
   neighb = neigh.create(ndim = 2, type = 0)
-  sim =  simtub(dbin = coal_a0,dbout=outdb,model=gaus_a0,neigh = neighb,mean=5000, nbsimu = nsim)
+  sim =  simtub(dbin = coal_a0,dbout=outdb,model=gaus_a0,neigh = neighb,mean=5000,seed=939452503, nbsimu = nsim)
   return(sim)
   
 }
@@ -203,7 +199,7 @@ sim_a1 <- function(indb, nsim=1){
   gaus_a1 = model.create("Gaussian", range=10, sill=9000000)
   outdb = db.create(x0=c(0,0),dx=c(1,1),nx=c(200,100))
   neighb = neigh.create(ndim = 2, type = 0)
-  sim_a1 =  simtub(dbin = coal_a1,dbout=outdb,model=gaus_a1,neigh = neighb,mean=15000, nbsimu = nsim)
+  sim_a1 =  simtub(dbin = coal_a1,dbout=outdb,model=gaus_a1,neigh = neighb,mean=15000,seed=707693329, nbsimu = nsim)
   return(sim_a1)
 
 }
@@ -383,7 +379,7 @@ msd = sqrt(mvar)
 lines(z, mmu + 1.96*msd, col="red")
 lines(z, mmu - 1.96*msd, col="red")
 ```
-The standard 95% CI steady until cutoff $z$ near 2000, when the distribution of curves begins to widen. Blocks over 2000 are a rare event, many simulations will not produce any blocks of this value or higher. Destroyed by averaging. The In fact, the high calorific value blocks occur more in simulations where the high accumulation occurs with the low thickness. 
+The standard 95% CI steady until cutoff $z$ near 2000, when the distribution of curves begins to widen. Blocks over 2000 are rare, many simulations will not produce any blocks of this value or higher. The quotient of the distributions, destroyed by averaging. In fact, the high calorific value blocks occur more in simulations where the high accumulation occurs with the low thickness, a further element of chance.
 
 
 ```{r}
