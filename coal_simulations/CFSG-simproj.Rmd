@@ -187,7 +187,7 @@ plot(db.locate(coal_db, "Accumulation", "z"), add = T)
 sim_a1 <- function(indb, nsim=1){
   
   coal_a1 = db.locate(indb, "Accumulation", "z")
-  coal_a1 = db.sel(indb, LQ==2)
+  coal_a1 = db.sel(coal_a1, LQ==2)
   gaus_a1 = model.create("Gaussian", range=10, sill=9000000)
   outdb = db.create(x0=c(0,0),dx=c(1,1),nx=c(200,100))
   neighb = neigh.create(ndim = 2, type = 0)
@@ -205,22 +205,6 @@ plot(db.locate(coal_db, "Accumulation", "z"),add=T)
 
 ```{r}
 
-#Pull out vectors of simulated 
-simulated_a0 = sima0@items$Simu.Accumulation.S1
-simulated_a1 = sima1@items$Simu.Accumulation.S1
-
-#Retrieve the simulated LQ index
-#Turn into binary selector/mask
-mask_1 = simlq0@items$SimPGS.LQ.SFac1 - 1
-#Reverse
-mask_0 = 1 - mask_1
-
-#Check - make sure the 
-all(mask_0 + mask_1 == 1)
-
-pw_map = mask_0 * simulated_a0 + mask_1 * simulated_a1
-
-
 join_sims_zonal <- function(sim0, sim1, zones){
   
   mask_1 = zones - 1
@@ -233,9 +217,9 @@ join_sims_zonal <- function(sim0, sim1, zones){
 simulated_a0 = sima0@items$Simu.Accumulation.S1
 simulated_a1 = sima1@items$Simu.Accumulation.S1
 
-jsim = join_sims_zonal(simulated_a0,simulated_a1,simlq@items$SimPGS.LQ.SFac1)
+jsim = join_sims_zonal(simulated_a0,simulated_a1,simlq0@items$SimPGS.LQ.SFac1)
 
-plot(db.locate(db.create(jsim,x0=c(0,0),dx=c(1,1),nx=c(200,100)),"jsim","z"))
+plot(db.locate(db.create(jsim,x0=c(0,0),dx=c(1,1),nx=c(200,100)),"jsim","z"), xlab = "X", ylab="Y", title="Accumulation A (Simulated)")
 
 
 
@@ -247,11 +231,11 @@ Compute and plot the calorific value $C(x) = \frac{A(x)}{T(x)}$.
 
 ```{r}
 
-cx = pw_map/simu@items$Simu.Thickness.S1
+cx = jsim/simu@items$Simu.Thickness.S1
 
 cxdb = db.create(cx,x0=c(0,0),dx=c(1,1),nx=c(200,100))
 cxdb = db.locate(cxdb, 4, "z")
-plot(cxdb)
+plot(cxdb, xlab="X", ylab="Y", title="Calorific Value (Simulated)")
 
 ```
 
@@ -262,9 +246,9 @@ Value of $C_{v}$ on each panel averaging over the 100 contained values.
 ```{r warning=FALSE}
 cgrid = db.create(x0=c(0,0),dx=c(10,10),nx=c(20,10))
 
-plot(blockstat(cgrid, cxdb, fun='mean'))
-
 panel_q =blockstat(cgrid, cxdb, fun='mean')
+
+plot(panel_q, xlab = "X", ylab = "Y", title = "Calorific Value of Panels (Simulated)")
 ```
 
 # 9. Quality tonnage and mean quality above cutoff curves
@@ -272,7 +256,7 @@ panel_q =blockstat(cgrid, cxdb, fun='mean')
 Quality tonnage and mean quality above cutoff for cut-off varying from 1000 to 2500. 
 
 ```{r}
-hist(panel_q@items$Stats.mean)
+hist(panel_q@items$Stats.mean, main = paste("Histogram, Calorific Value of Panels"), xlab = "Calorific value of Panels (Simulated)")
 ```
 
 Replicates the two modes, dispersion of the distribution. 
@@ -282,8 +266,6 @@ Replicates the two modes, dispersion of the distribution.
 
 ```{r}
 sel = selectivity(panel_q, cuts = seq(1000,2500,50), flag.plot = F)
-
-selectivity.curve(sel,"Z","T")
 
 plot(sel[,1], sel[,2], type='l')
 ```
