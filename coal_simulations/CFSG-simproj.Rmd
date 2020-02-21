@@ -338,6 +338,17 @@ for (idx in 5:103){
 
 ```
 
+```{r}
+plot(z, Tm, type = 'l',main="Tonnage above Cutoff versus Cutoff", xlab="Cutoff", ylab ="Tonnage above Cutoff")
+```
+
+
+```{r}
+plot(z, mmu, type = 'l', main="Mean Grade above Cutoff versus Cutoff", xlab="Cutoff", ylab ="Mean Grade above Cutoff")
+```
+
+
+
 
 # 11. Empirical 95% Confidence Interval curves
 
@@ -345,7 +356,7 @@ for (idx in 5:103){
 ```{r}
 
 mmu = rowMeans(Mmatrix, na.rm = T, dims = 1)
-plot(z, mmu, type = 'l')
+plot(z, mmu, type = 'l', main="Mean Grade above Cutoff versus Cutoff", xlab="Cutoff", ylab ="Mean Grade above Cutoff")
 
 mvar = apply(Mmatrix, 1, var, na.rm = T)
 msd = sqrt(mvar)
@@ -358,9 +369,7 @@ The standard 95% CI steady until cutoff $z$ near 2000, when the distribution of 
 
 ```{r}
 Tm = rowMeans(Tmatrix, na.rm = T, dims = 1)
-plot(z, Tm, type = 'l')
-
-
+plot(z, Tm, type = 'l',main="Tonnage above Cutoff versus Cutoff", xlab="Cutoff", ylab ="Tonnage above Cutoff")
 
 Tvar = apply(Tmatrix, 1, var, na.rm = T)
 Tsd = sqrt(Tvar)
