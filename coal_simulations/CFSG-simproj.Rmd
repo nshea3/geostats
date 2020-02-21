@@ -35,7 +35,7 @@ cat("\nVariance of accumulation: ", var(coal_df$Accumulation))
 ```
 
 Accumulation has a very large variance. In the Gaussian case, this would result in many negative values for accumulation. Since accumulation is a physical nonnegative quantity, it cannot be distributed in this way. 
-However, the large variance is consistent with the given multimodal sum-of-Gaussians distribution.
+However, the large variance is consistent with the given model, a multimodal sum of Gaussians distribution.
 
 ### Lignite Quality Index
 
@@ -62,21 +62,25 @@ Testing validity of given model with 1-sample Kolmogorov-Smirnov test:
 ```{r}
 ks.test(coal_df$Thickness, pnorm, 10, 2)
 ```
-The p-value of 0.06661 exceeds the significance 0.05, so we do not reject the hypothesis that the sample was drawn from this distribution.
+The p-value of 0.06661 exceeds the significance 0.05, so we do not reject the hypothesis that the sample was drawn from the distribution with these parameters $\mu = 10$, $\sigma^2 = 4$. 
 
 ```{r}
 hist(coal_df$Accumulation, breaks=10)
 ```
 
-The accumulation is bimodal, one mode centered at low values with low variance, and another with a high mean and high dispersion. 
+The accumulation is bimodal, one mode centered at low values with low variance, and the other with a high mean and high dispersion.
+
+Plotting densities separately for lignite quality classes shows how lignite quality is associated with the accumulation.
+
+(Lignite quality = 1 in blue, lignite quality = 0 in black)
 
 ```{r}
-plot(density(coal_df[coal_df$LQ == 1,]$Accumulation), xlim = c(0,25000), main="Density curves for Accumulation distributions",xlab="Accumulation value")
-lines(density(coal_df[coal_df$LQ == 2,]$Accumulation), col='blue')
+plot(density(coal_df[coal_df$LQ == 0,]$Accumulation), xlim = c(0,25000), main="Density curves for Accumulation distributions",xlab="Accumulation value")
+lines(density(coal_df[coal_df$LQ == 1,]$Accumulation), col='blue')
 
 ```
-
-
+Lignite quality 1 is a distribution centered near 15000 with high variance.
+Lignite quality 0 is a distribution centered near 5000 with low variance. 
 
 ```{r}
 hist(coal_df$LQ)
@@ -157,6 +161,8 @@ plot(simlq0, xlab = "X", ylab="Y", title="Lithotype Quality Index (Simulated)")
 plot(db.locate(coal_db, "LQ", "z"), add = T)
 ```
 
+The high range parameter favors large regions of the same value and limits variability at small scales. 
+
 
 # 6. Conditional simulation of the accumulation A 
 
@@ -165,6 +171,9 @@ Where $LQ(x) = 0$,  $\mu = 5000$ and $\sigma^{2} = 250000$
 Where $LQ(x) = 1$, $\mu = 15000$ and $\sigma^{2} = 9\times10^6$.
 
 Both $A_0$ and $A_1$ have Gaussian covariance with range 10. 
+
+
+$A_0$ and $A_1$ are simulated separately over the whole domain, conditioned *only* on the data with $LQ(x) = 0$ and $LQ(x) = 1$ respectively. Then the two simulations are joined together by creating a mask for the regions with $LQ(x) = 0$ and those with $LQ(x) = 1$ and assigning the appropriate simulated values in that region. 
 
 ```{r warning=FALSE}
 
@@ -188,6 +197,8 @@ sima0 = sim_a0(coal_db)
 plot(sima0, pos.legend=0, xlab="X", ylab="Y", title="Accumulation A_0 (Simulated)")
 plot(db.locate(coal_db, "Accumulation", "z"), add = T)
 ```
+The smaller range parameter is immediately apparent when compared with the simulated thickness, which has a range parameter twice as large. Fluctuations between high and low values occur over much smaller distances.
+
 ```{r warning=FALSE}
 
 sim_a1 <- function(indb, nsim=1){
@@ -225,11 +236,13 @@ simulated_a1 = sima1@items$Simu.Accumulation.S1
 
 jsim = join_sims_zonal(simulated_a0,simulated_a1,simlq0@items$SimPGS.LQ.SFac1)
 
-plot(db.locate(db.create(jsim,x0=c(0,0),dx=c(1,1),nx=c(200,100)),"jsim","z"), xlab = "X", ylab="Y", title="Accumulation A (Simulated)")
+plot(db.locate(db.create(jsim,x0=c(0,0),dx=c(1,1),nx=c(200,100)),"jsim","z"), xlab = "X", ylab="Y", title="Accumulation A (Simulated)", pos.legend=1)
 
 
 
 ```
+
+The map of simulated Accumulation shows the spatial behavior of the bimodal distribution, with the high valued  
 
 # 7. Calorific value
 
@@ -241,9 +254,10 @@ cx = jsim/simu@items$Simu.Thickness.S1
 
 cxdb = db.create(cx,x0=c(0,0),dx=c(1,1),nx=c(200,100))
 cxdb = db.locate(cxdb, 4, "z")
-plot(cxdb, xlab="X", ylab="Y", title="Calorific Value (Simulated)")
+plot(cxdb, xlab="X", ylab="Y", title="Calorific Value (Simulated)",pos.legend=1)
 
 ```
+Undefined mean and variance? Piecewise Cauchy distribution? 
 
 # 8. Value of $C_{v}$ on each panel
 
@@ -254,8 +268,10 @@ cgrid = db.create(x0=c(0,0),dx=c(10,10),nx=c(20,10))
 
 panel_q =blockstat(cgrid, cxdb, fun='mean')
 
-plot(panel_q, xlab = "X", ylab = "Y", title = "Calorific Value of Panels (Simulated)")
+plot(panel_q, xlab = "X", ylab = "Y", title = "Calorific Value of Panels (Simulated)",pos.legend=1)
 ```
+The mean operation has smoothed the extreme values in the distribution.
+Max panel grade is far lower than max grade at 1x1 scale, and min is higher than max grade at 1x1 scale. E
 
 # 9. Quality tonnage and mean quality above cutoff curves
 
@@ -372,7 +388,7 @@ msd = sqrt(mvar)
 lines(z, mmu + 1.96*msd, col="red")
 lines(z, mmu - 1.96*msd, col="red")
 ```
-The standard 95% CI steady until cutoff $z$ near 2000, when the distribution of curves begins to widen. Blocks over 2000 are rare, many simulations will not produce any blocks of this value or higher. The quotient of the distributions, destroyed by averaging. In fact, the high calorific value blocks occur more in simulations where the high accumulation occurs with the low thickness, a further element of chance.
+The standard 95% CI steady until cutoff $z$ near 2000, when the distribution of curves begins to widen. Blocks over 2000 are rare, many simulations will not produce any blocks of this value or higher. The quotient of the distributions, destroyed by averaging. In fact, the high calorific value blocks are most likely to occur in simulations where the high accumulation and low thickness coincide spatially.
 
 
 ```{r}
