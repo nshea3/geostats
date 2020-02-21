@@ -34,8 +34,8 @@ cat("Mean accumulation: ", mean(coal_df$Accumulation))
 cat("\nVariance of accumulation: ", var(coal_df$Accumulation))
 ```
 
-Very large variance, guaranteed negative values for accumulation if we are in the Gaussian case (infinite extent?) 
-Since accumulation is a physical (nonnegative) quantity, we cannot have these distributions. Consistent with the given multimodal sum-of-Gaussians.
+Accumulation has a very large variance. In the Gaussian case, this would result in negative values for accumulation. Since accumulation is a physical nonnegative quantity, it cannot be distributed in this way. 
+However, the large variance is consistent with the given multimodal sum-of-Gaussians distribution.
 
 ### Lignite Quality Index
 
@@ -53,7 +53,7 @@ Variance matches Bernoulli RV with $p = 0.29$, $p(1-p) = 0.2059$.
 ```{r}
 hist(coal_df$Thickness, breaks = 10)
 ```
-The curve is bell-shaped with a single mode around the average at 10. Negative skew. Median is 10.38, slightly higher than mean. 
+The curve is bell-shaped with a single mode around the average at 10. The curve shows a slight negative skew. Median is 10.38, slightly higher than mean. 
 
 Given model for Thickness is $\mu = 10$, $\sigma^2 = 4$.
 
@@ -62,14 +62,13 @@ Testing validity of given model with 1-sample Kolmogorov-Smirnov test:
 ```{r}
 ks.test(coal_df$Thickness, pnorm, 10, 2)
 ```
-
+The p-value of 0.06661 exceeds the significance 0.05, so we do not reject the hypothesis that the sample was drawn from this distribution.
 
 ```{r}
 hist(coal_df$Accumulation, breaks=10)
 ```
 
-Looks bimodal, one centered at low values with low variance.
-Another with high mean with high dispersion. 
+The accumulation is bimodal, one mode centered at low values with low variance, and another with a high mean and high dispersion. 
 
 ```{r}
 
@@ -102,8 +101,7 @@ coal_db = db.locate(coal_db,5,"z")
 ```
 
 
-Simulating the thickness
-Modeled as a Gaussian random function with parameters $\mu = 10$, $\sigma^2 = 4$.
+Simulating the thickness, modeled as a Gaussian random function with parameters $\mu = 10$ and $\sigma^2 = 4$.
 
 ```{r warning=FALSE}
 
@@ -122,17 +120,14 @@ sim_thickness <- function(indb, nsim = 1){
 
 simu = sim_thickness(coal_db)
 
-plot(simu)
+plot(simu, xlab="X", ylab="Y", title="Thickness (Simulated)")
 plot(coal_db, add=T)
 ```
 
 
 # 5. Conditional simulation of LQ (lignite quality index)
 
-Modelled as a thresholded GRF with constant proportion 0.5. 
-Underlying GRF is standard ($\mu = 0$ and $\sigma^{2} = 1$) and Gaussian covariance with range 50. 
-
-First, update the 
+LQ is modelled as a thresholded GRF with constant proportion 0.5. The underlying GRF is standard Gaussian ($\mu = 0$ and $\sigma^{2} = 1$) and covariance is Gaussian with range 50. 
 
 ```{r warning=FALSE}
 
@@ -145,27 +140,25 @@ sim_lq <- function(indb, nsim = 1){
   voisin = neigh.create(type=0)
   outdb = db.create(x0=c(0,0),dx=c(1,1),nx=c(200,100))
   gaus = model.create("Gaussian", range=50)
-  simlq = simpgs(dbout=outdb, dbin=indb, rule=rule,props=c(0.5, 0.5), model1=gaus, neigh = voisin,seed=573738494, nbsimu = nsim)
-  return(simlq)
+  simlqin = simpgs(dbout=outdb, dbin=indb, rule=rule,props=c(0.5, 0.5), model1=gaus, neigh = voisin,seed=573738494, nbsimu = nsim)
+  return(simlqin)
 
 }
 
-simlq = sim_lq(coal_db)
+simlq0 = sim_lq(coal_db)
 
-plot(simlq)
+plot(simlq0, xlab = "X", ylab="Y", title="Lithotype Quality Index (Simulated)")
 plot(db.locate(coal_db, "LQ", "z"), add = T)
 ```
 
 
 # 6. Conditional simulation of the accumulation A 
 
-just continue with the simulation from before
-
 Where $LQ(x) = 0$,  $\mu = 5000$ and $\sigma^{2} = 250000$
 
 Where $LQ(x) = 1$, $\mu = 15000$ and $\sigma^{2} = 9\times10^6$.
 
-Both have Gaussian covariance with range 10. 
+Both $A_0$ and $A_1$ have Gaussian covariance with range 10. 
 
 ```{r warning=FALSE}
 
@@ -186,16 +179,15 @@ sim_a0 <- function(indb, nsim=1){
 
 sima0 = sim_a0(coal_db)
 
-plot(sima0, pos.legend=0)
+plot(sima0, pos.legend=0, xlab="X", ylab="Y", title="Accumulation A_0 (Simulated)")
 plot(db.locate(coal_db, "Accumulation", "z"), add = T)
 ```
 ```{r warning=FALSE}
 
 sim_a1 <- function(indb, nsim=1){
   
-  db.locate(indb, "Accumulation", "z")
+  coal_a1 = db.locate(indb, "Accumulation", "z")
   coal_a1 = db.sel(indb, LQ==2)
-  coal_a1 = db.locate(coal_a1,6,"z")
   gaus_a1 = model.create("Gaussian", range=10, sill=9000000)
   outdb = db.create(x0=c(0,0),dx=c(1,1),nx=c(200,100))
   neighb = neigh.create(ndim = 2, type = 0)
@@ -206,7 +198,7 @@ sim_a1 <- function(indb, nsim=1){
 
 sima1 = sim_a1(coal_db)
 
-plot(sima1)
+plot(sima1, xlab="X", ylab="Y", title="Accumulation A_1 (Simulated)")
 plot(db.locate(coal_db, "Accumulation", "z"),add=T)
 ```
 
@@ -219,7 +211,7 @@ simulated_a1 = sima1@items$Simu.Accumulation.S1
 
 #Retrieve the simulated LQ index
 #Turn into binary selector/mask
-mask_1 = simlq@items$SimPGS.LQ.SFac1 - 1
+mask_1 = simlq0@items$SimPGS.LQ.SFac1 - 1
 #Reverse
 mask_0 = 1 - mask_1
 
