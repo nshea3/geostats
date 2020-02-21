@@ -34,7 +34,7 @@ cat("Mean accumulation: ", mean(coal_df$Accumulation))
 cat("\nVariance of accumulation: ", var(coal_df$Accumulation))
 ```
 
-Accumulation has a very large variance. In the Gaussian case, this would result in negative values for accumulation. Since accumulation is a physical nonnegative quantity, it cannot be distributed in this way. 
+Accumulation has a very large variance. In the Gaussian case, this would result in many negative values for accumulation. Since accumulation is a physical nonnegative quantity, it cannot be distributed in this way. 
 However, the large variance is consistent with the given multimodal sum-of-Gaussians distribution.
 
 ### Lignite Quality Index
@@ -44,7 +44,7 @@ cat("Mean lignite quality: ", mean(coal_df$LQ))
 cat("\nVariance of lignite quality: ", var(coal_df$LQ))
 ```
 
-Only 29% of the observations have quality index 1. 79% have quality index 0. 
+Only 29% of the observations have quality index 1. 71% have quality index 0. 
 Variance matches Bernoulli RV with $p = 0.29$, $p(1-p) = 0.2059$.
 
 
@@ -71,12 +71,18 @@ hist(coal_df$Accumulation, breaks=10)
 The accumulation is bimodal, one mode centered at low values with low variance, and another with a high mean and high dispersion. 
 
 ```{r}
-
-coal_df[coal_df$LQ == 1,]
+plot(density(coal_df[coal_df$LQ == 1,]$Accumulation), xlim = c(0,25000), main="Density curves for Accumulation distributions",xlab="Accumulation value")
+lines(density(coal_df[coal_df$LQ == 2,]$Accumulation), col='blue')
 
 ```
 
 
+
+```{r}
+hist(coal_df$LQ)
+```
+
+As predicted from the mean, only 29% of the observations have quality index 1. Roughly 71% have quality index 0. 
 
 # 4. Conditional simulation of thickness T on discretization grid
 
@@ -120,7 +126,7 @@ sim_thickness <- function(indb, nsim = 1){
 
 simu = sim_thickness(coal_db)
 
-plot(simu, xlab="X", ylab="Y", title="Thickness (Simulated)")
+plot(simu, xlab="X", ylab="Y", title="Thickness (Simulated)", pos.legend = 1)
 plot(coal_db, add=T)
 ```
 
@@ -339,11 +345,13 @@ for (idx in 5:103){
 ```
 
 ```{r}
+Tm = rowMeans(Tmatrix, na.rm = T, dims = 1)
 plot(z, Tm, type = 'l',main="Tonnage above Cutoff versus Cutoff", xlab="Cutoff", ylab ="Tonnage above Cutoff")
 ```
 
 
 ```{r}
+mmu = rowMeans(Mmatrix, na.rm = T, dims = 1)
 plot(z, mmu, type = 'l', main="Mean Grade above Cutoff versus Cutoff", xlab="Cutoff", ylab ="Mean Grade above Cutoff")
 ```
 
