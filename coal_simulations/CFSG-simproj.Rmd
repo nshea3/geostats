@@ -288,7 +288,7 @@ Interpreted in terms of the distribution, we can clearly see the change in slope
 
 
 ```{r}
-plot(sel[,1],sel[,5],type = 'l')
+plot(sel[,1],sel[,5],type = 'l',main="Average Grade vs Cutoff", xlab = "Cutoff (CV)", ylab="Average Grade")
 ```
 Here, we can also see a transition from a smooth area to a stepwise curve at high cutoff values. The very few remaining blocks cause abrupt changes in the average grade in the as they are excluded at successively higher cutoffs.
 
@@ -354,14 +354,14 @@ for (idx in 5:103){
 Tm = rowMeans(Tmatrix, na.rm = T, dims = 1)
 plot(z, Tm, type = 'l',main="Tonnage above Cutoff versus Cutoff", xlab="Cutoff (CV)", ylab ="Tonnage above Cutoff")
 ```
+The curve is much smoother, transition around 1750 is still visible. 
 
 
 ```{r}
 mmu = rowMeans(Mmatrix, na.rm = T, dims = 1)
 plot(z, mmu, type = 'l', main="Mean Grade above Cutoff versus Cutoff", xlab="Cutoff (CV)", ylab ="Mean Grade above Cutoff")
 ```
-
-
+The average behavior of the Mean Grade curve is much smoother but the irregular behavior at high cutoff indicates that the effect of rare high grade blocks is still present in the average curves. 
 
 
 # 11. Empirical 95% Confidence Interval curves
@@ -377,9 +377,11 @@ msd = sqrt(mvar)
 
 lines(z, mmu + 1.96*msd, col="red")
 lines(z, mmu - 1.96*msd, col="red")
+lines(z, z, col="blue", lty="55")
 ```
-The standard 95% CI steady until cutoff $z$ near 2000, when the distribution of curves begins to widen. Blocks over 2000 are rare, many simulations will not produce any blocks of this value or higher. The quotient of the distributions, destroyed by averaging. In fact, the high calorific value blocks are most likely to occur in simulations where the high accumulation and low thickness coincide spatially.
-
+The standard 95% CI is steady until cutoff $z$ near 1750 to 2000, when the distribution of curves begins to widen. Blocks over 2000 are rare, as averaging and ratios destroy the higher grades, so many simulations will not frequently contain blocks in this range. These high calorific value blocks are most likely to occur in simulations where the high accumulation and low thickness coincide spatially. 
+This effect causes an increase in the standard deviation as the sample size decreases. 
+Line y = x is also plotted (dotted line, in blue) as only values above this line are possible for this curve (mean grade above cutoff cannot be below cutoff.)
 
 ```{r}
 Tm = rowMeans(Tmatrix, na.rm = T, dims = 1)
@@ -392,7 +394,4 @@ lines(z, Tm + 1.96*Tsd, col="red")
 lines(z, Tm - 1.96*Tsd, col="red")
 ```
 
-The tonnage cutoff (quality tonnage) curve decreases with increasing cutoff. High grade blocks. 
-The curve transitions slightly between cutoff 1500 and cutoff 2000 where we pass from the area of the distribution dominated by A0 to the area dominated by A1. Drawing from two distributions to drawing from one
-As seen in the mean quality above cutoff curve, not many simulations producing blocks in this range. Many simulations will simply have zero at this, driving down the variance substantially. 
-The effect of drawing from a smaller set of blocks outweighs the larger variance of the higher grade blocks.
+The tonnage cutoff (quality tonnage) curve decreases with increasing cutoff as blocks are excluded.The curve shape changes between cutoff 1500 and cutoff 2000 where it passes from the cutoff values dominated by distribution A0 to the region dominated by distribution A1. As seen in the mean quality above cutoff curve, not many simulations producing blocks in this range. Many simulations will simply have zero at this level of cutoff, driving down the variance substantially. The combined effect of many simulations with zero tons above the high cutoff and drawing from a smaller set of blocks outweighs the larger variance of the higher grade blocks.
