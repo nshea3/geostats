@@ -256,7 +256,7 @@ cxdb = db.locate(cxdb, 4, "z")
 plot(cxdb, xlab="X", ylab="Y", title="Calorific Value (Simulated)",pos.legend=1)
 
 ```
-The calorific value is determined as $C(x) = \frac{A(x)}{T(x)}$. In a given region of the map with a single lignite quality value, the calorific value definition simplifies to $C(x) = \frac{A_{1}(x)}{T(x)}$ (if LQ=1) or  $C(x) = \frac{A_{0}(x)}{T(x)}$ (if LQ = 0). In both cases, the calorific value is the ratio of two Gaussian distributions, so the values will be distributed according to a ratio distribution. The spatial distribution of calorific values has intermediate range between thickness and, while there are short-range fluctuatoins. The pocket of high values corresponds to a minima of the thickness simulation. 
+The calorific value is determined as $C(x) = \frac{A(x)}{T(x)}$. In a given region of the map with a single lignite quality value, the calorific value definition simplifies to $C(x) = \frac{A_{1}(x)}{T(x)}$ (if LQ=1) or  $C(x) = \frac{A_{0}(x)}{T(x)}$ (if LQ = 0). In both cases, the calorific value is the ratio of two Gaussian distributions, so the values will be distributed according to a ratio distribution. The spatial distribution of calorific values has intermediate range between thickness and accumulations; while there are short-range fluctuations they are not as extreme as in the accumulation variable. The area of high values located in the lower left hand corner corresponds to a minima of the thickness simulation.
 
 # 8. Value of $C_{v}$ on each panel
 
@@ -290,6 +290,8 @@ Interpreted in terms of the distribution, we can clearly see the change in slope
 ```{r}
 plot(sel[,1],sel[,5],type = 'l',main="Average Grade vs Cutoff", xlab = "Cutoff (CV)", ylab="Average Grade")
 ```
+Average grade given by $m(c)=\frac{\sum_{i=1}^{N} C_{v}\left(x_{i}\right) \mathbb{1}_{v}\left(C_{v}\left(x_{i}\right)>c\right)}{\sum_{i=1}^{N} \mathbb{1}_{v}\left(C_{v}\left(x_{i}\right)>c\right)}$.
+
 Here, we can also see a transition from a smooth area to a stepwise curve at high cutoff values. The very few remaining blocks cause abrupt changes in the average grade in the as they are excluded at successively higher cutoffs.
 
 
@@ -394,4 +396,4 @@ lines(z, Tm + 1.96*Tsd, col="red")
 lines(z, Tm - 1.96*Tsd, col="red")
 ```
 
-The tonnage cutoff (quality tonnage) curve decreases with increasing cutoff as blocks are excluded.The curve shape changes between cutoff 1500 and cutoff 2000 where it passes from the cutoff values dominated by distribution A0 to the region dominated by distribution A1. As seen in the mean quality above cutoff curve, not many simulations producing blocks in this range. Many simulations will simply have zero at this level of cutoff, driving down the variance substantially. The combined effect of many simulations with zero tons above the high cutoff and drawing from a smaller set of blocks outweighs the larger variance of the higher grade blocks.
+The tonnage cutoff (quality tonnage) curve decreases with increasing cutoff as blocks are excluded. The curve shape changes between cutoff 1500 and cutoff 2000 where it passes from the cutoff values dominated by distribution $A_0$ to the region dominated by distribution $A_1$. As seen in the mean quality above cutoff curve, not many simulations producing blocks in this range. Many simulations will simply have zero at this level of cutoff, driving down the variance substantially. The combined effect of many simulations with zero tons above the high cutoff and drawing from a smaller set of blocks outweighs the larger variance of the higher grade blocks.
