@@ -1,0 +1,145 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+```{r}
+library(gstat)
+data(walker)
+```
+```{r}
+qqnorm(walker)
+```
+
+```{r}
+hist(walker.exh$V, breaks = 100)
+```
+
+```{r}
+qqplot(walker.exh$V, walker.exh$U)
+```
+```{r}
+bubble(walker)
+```
+```{r}
+library(dplyr)
+
+walkersample = sample_n(walker.exh@data, 100)
+
+plot(walkersample$V,walkersample$U)
+```
+```{r}
+walkers = read.csv("walkerlake_sample.csv", header = F)
+
+oddrows <- seq(1,nrow(walkers), by=2)
+evenrows <- seq(2,nrow(walkers), by=2)
+
+Vws = walkers[oddrows,]
+Uws = walkers[evenrows,]
+Uws
+```
+```{r}
+Vvect = unname(unlist(Vws))
+Uvect = unname(unlist(Uws))
+hist(Vvect, breaks = 20)
+```
+```{r}
+plot(ecdf(Vvect))
+```
+```{r}
+qqnorm(Vvect)
+```
+```{r}
+library(ggplot2)
+library(patchwork)
+
+uvs_df = data.frame(Uvect, Vvect)
+p1 <- ggplot(data = uvs_df, aes(uvs_df$Uvect)) + geom_histogram()
+p2 <- ggplot(data = uvs_df, aes(uvs_df$Vvect)) + geom_histogram()
+
+p1 + p2
+```
+
+```{r}
+g = ggplot() + geom_point(aes(y=uvs_df$Uvect, x=uvs_df$Vvect))
+g
+```
+```{r}
+contour(data.matrix(Vws))
+```
+
+```{r}
+heatmap(data.matrix(Vws))
+```
+```{r}
+Vmat = data.matrix(Vws)
+
+heatmap(1*(Vmat > 90))
+```
+Try an h-scatterplot here https://rdrr.io/cran/gstat/man/hscat.html
+
+```{r}
+data(meuse)
+```
+
+
+Need to create spatialpointsdataframe (https://stackoverflow.com/questions/32583606/create-spatialpointsdataframe) data type
+
+
+```{r}
+library(sp)
+library(gstat)
+cy = 1.0*rep(seq(1.0,10.0),each=10)
+cx = 1.0*rep(seq(1.0,10.0))
+
+sdf = data.frame(cx, cy, Uvect, Vvect)
+
+coordinates(sdf) = ~cx + cy
+
+sdf_hsc = hscat(Uvect ~ 1,sdf,c(0,1,2,3,4,5,6))
+
+sdf_hsc
+```
+```{r}
+sdf_hsc = hscat(Uvect + Vvect ~ 1,sdf,c(0,1,2,3,4,5,6))
+sdf_hsc
+```
+```{r}
+plot(variogram(Vvect~1, sdf))
+```
+
+```{r}
+#After :https://cran.r-project.org/web/packages/gstat/gstat.pdf
+
+
+g = gstat(id = "uvect", formula = Uvect~1 ,data=sdf)
+g = gstat(g, id = "vvect", formula = Vvect ~ 1, data =sdf)
+
+plot(variogram(g))
+```
+
+```{r}
+hist(walker.exh$V,freq = F)
+summary(walker.exh$V)
+```
+```{r}
+hist(walker.exh$U,freq = F)
+summary(walker.exh$U)
+```
+```{r}
+plot(walker.exh)
+```
+
+
+From Isaaks and Srivistava, we have that $V=[\bar{x} * \ln (U+1)] / 10$
+
+and t = 1 if $\bar{x} < 5000$, t = 2 if  $\bar{x} \geq 5000$
+
+```{r}
+xbar = 10*walker.exh$V / log(walker.exh$U + 1)
+T = xbar > 5000
+sum(as.numeric(T), na.rm = T)
+hist(xbar, breaks = 100)
+```
+
