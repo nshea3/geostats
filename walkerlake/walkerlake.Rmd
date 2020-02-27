@@ -143,3 +143,19 @@ sum(as.numeric(T), na.rm = T)
 hist(xbar, breaks = 100)
 ```
 
+# 18. Estimating a Distribution
+
+If we want to estimate something other than a mean, we need to use other methods. 
+
+Look at the proportion of the data below 500 ppm
+```{r}
+hist(walker.exh[walker.exh$V > 500,]$V)
+nrow(walker.exh@data$V > 500)
+```
+```{r}
+hist(walker[walker$V < 500,]$V)
+```
+```{r}
+plot(walker.exh[walker.exh$U < 500,])
+```
+
