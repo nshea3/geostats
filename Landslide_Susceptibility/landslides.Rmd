@@ -1,0 +1,135 @@
+---
+title: "R Notebook"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+After https://geocompr.robinlovelace.net/spatial-cv.html
+
+https://rdrr.io/github/mlr-org/mlr3spatiotempcv/man/mlr3spatiotempcv-package.html
+
+https://mlr3book.mlr-org.com/spatial.html
+
+https://github.com/mlr-org/mlr3spatiotempcv/issues/22
+
+
+
+```{r}
+data("landslides", package = "RSAGA")
+```
+
+
+```{r}
+summary(landslides)
+```
+
+```{r}
+# select non-landslide points
+non_pts = filter(landslides, lslpts == FALSE)
+# select landslide points
+lsl_pts = filter(landslides, lslpts == TRUE)
+# randomly select 175 non-landslide points
+set.seed(11042018)
+non_pts_sub = sample_n(non_pts, size = nrow(lsl_pts))
+# create smaller landslide dataset (lsl)
+lsl = bind_rows(non_pts_sub, lsl_pts)
+```
+
+```{r}
+dem = raster(
+  dem$data, 
+  crs = dem$header$proj4string,
+  xmn = dem$header$xllcorner, 
+  xmx = dem$header$xllcorner + dem$header$ncols * dem$header$cellsize,
+  ymn = dem$header$yllcorner,
+  ymx = dem$header$yllcorner + dem$header$nrows * dem$header$cellsize
+  )
+
+plot(dem)
+```
+
+```{r}
+# attach landslide points with terrain attributes
+data("lsl", package = "spDataLarge")
+# attach terrain attribute raster stack
+data("ta", package = "spDataLarge")
+```
+
+
+```{r}
+lsl
+```
+
+
+
+```{r}
+fit = glm(lslpts ~ slope + cplan + cprof + elev + log10_carea,
+          family = binomial(),
+          data = lsl)
+```
+
+```{r}
+summary(fit)
+```
+
+```{r}
+pred_glm = predict(object = fit, type = "response")
+head(pred_glm)
+
+pred = raster::predict(ta, model = fit, type = "response")
+
+plot(pred)
+```
+```{r}
+pROC::auc(pROC::roc(lsl$lslpts, fitted(fit)))
+```
+
+```{r}
+library(mlr3)
+# coordinates needed for the spatial partitioning
+coords = lsl[, c("x", "y")]
+# select response and predictors to use in the modeling
+data = lsl
+# create task
+
+
+task = TaskClassifST$new(id = "landslide", data, target = "lslpts",
+                       positive = "TRUE", coordinate_names = c("x", "y"))
+
+
+
+learner = lrn("classif.rpart", predict_type = "prob")
+
+pred = learner$train(task)$predict(task)
+
+C = pred$confusion
+print(C)
+```
+```{r}
+
+```
+
+```{r}
+library(mlr3spatiotempcv)
+
+resampling = rsmp("spcv-buffer")
+```
+
+```{r}
+resampling <- rsmp("spcv-coords", folds = 5)
+resampling$instantiate(task)
+
+autoplot(resampling, task)
+```
+```{r}
+rr = resample(task, learner, resampling, store_models = T)
+
+
+library("mlr3viz")
+
+library("precrec")
+
+autoplot(rr, type = "roc")
+```
+
